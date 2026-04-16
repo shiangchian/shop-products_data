@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>目前資料庫中，得正產品的列表</title>
+    <style>
+        body {
+            font-family: "Times New Roman", "微軟正黑體", serif;
+            display: flex;
+            justify-content: center;
+            padding: 40px 10px;
+            background-color: white;
+            color: black;
+        }
+
+        /* 綠色外框容器 */
+        .outer-border {
+            border: 2px solid #228B22;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 1100px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        /* 表格樣式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            border: 1px solid red; /* 紅色表格細線 */
+            padding: 12px 5px;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+
+        .product-img {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+
+        .footer-text {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="outer-border">
+        <h3>目前資料庫中，得正 dejeng 的所有產品列表</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>產品編碼</th>
+                    <th>產品名稱</th>
+                    <th>售價</th>
+                    <th>產品描述</th>
+                    <th>產品圖示</th>
+                    <th>現有庫存</th>
+                    <th>最後異動時間</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>2026055001</td><td>水之森玄米抹茶</td><td>NT$ 65</td><td>嚴選靜岡抹茶搭配焙煎玄米</td><td><img src="image/01.jpg" class="product-img"></td><td>120</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055002</td><td>英倫伯爵紅茶</td><td>NT$ 55</td><td>佛手柑香氣與紅茶的經典結合</td><td><img src="image/02.jpg" class="product-img"></td><td>115</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055003</td><td>珍珠鮮奶</td><td>NT$ 75</td><td>Q彈手作珍珠搭配直送鮮乳</td><td><img src="image/03.jpg" class="product-img"></td><td>108</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055004</td><td>手炒黑糖鮮奶</td><td>NT$ 80</td><td>職人手工慢炒黑糖，香氣濃郁</td><td><img src="image/04.jpg" class="product-img"></td><td>95</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055005</td><td>嫩仙草凍奶</td><td>NT$ 70</td><td>滑嫩鮮草搭配濃郁奶茶</td><td><img src="image/05.jpg" class="product-img"></td><td>88</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055006</td><td>海鹽芒果綠</td><td>NT$ 65</td><td>芒果鮮甜與微鹹海鹽奶蓋</td><td><img src="image/06.jpg" class="product-img"></td><td>76</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055007</td><td>琥珀高峰烏龍</td><td>NT$ 55</td><td>炭焙香氣重，茶韻悠長</td><td><img src="image/07.jpg" class="product-img"></td><td>150</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055008</td><td>茉香綠茶拿鐵</td><td>NT$ 65</td><td>清新茉莉花香與鮮奶交織</td><td><img src="image/08.jpg" class="product-img"></td><td>102</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055009</td><td>芋頭鮮奶</td><td>NT$ 85</td><td>手作芋泥，口感綿密扎實</td><td><img src="image/09.jpg" class="product-img"></td><td>65</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055010</td><td>果漾微甜氣泡飲</td><td>NT$ 75</td><td>清爽氣泡搭配季節果漿</td><td><img src="image/10.jpg" class="product-img"></td><td>92</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055011</td><td>經典冰水果茶</td><td>NT$ 80</td><td>多種鮮切水果與茶湯結合</td><td><img src="image/11.jpg" class="product-img"></td><td>80</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055012</td><td>季節限定特調</td><td>NT$ 85</td><td>主廚當季推薦，驚喜口感</td><td><img src="image/12.jpg" class="product-img"></td><td>50</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055013</td><td>招牌綜合果茶</td><td>NT$ 90</td><td>得正招牌果茶，豐富多層次</td><td><img src="image/13.jpg" class="product-img"></td><td>70</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055027</td><td>焙烏龍鮮奶</td><td>NT$ 70</td><td>深焙烏龍與鮮奶完美比例</td><td><img src="image/27.jpg" class="product-img"></td><td>110</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055015</td><td>柚見冰茶</td><td>NT$ 65</td><td>葡萄柚果肉清爽微苦甘甜</td><td><img src="image/15.jpg" class="product-img"></td><td>85</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055031</td><td>蜜桃春烏龍</td><td>NT$ 75</td><td>甜蜜桃果香與春烏龍茶香</td><td><img src="image/31.jpg" class="product-img"></td><td>96</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055017</td><td>芝士奶蓋紅茶</td><td>NT$ 70</td><td>濃厚芝士奶蓋搭配純紅茶</td><td><img src="image/17.jpg" class="product-img"></td><td>77</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055018</td><td>桂花烏龍凍飲</td><td>NT$ 65</td><td>手工桂花凍，芬芳清爽</td><td><img src="image/18.jpg" class="product-img"></td><td>105</td><td>2026-04-16<br>22:00:01</td></tr>
+
+                <tr><td>2026055101</td><td>蜜糖波堤</td><td>NT$ 45</td><td>口感Q彈，裹上經典糖衣</td><td><img src="image/0001.jpg" class="product-img"></td><td>126</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055102</td><td>雙層巧克力波堤</td><td>NT$ 50</td><td>巧克力波堤裹黑巧克力</td><td><img src="image/0002.jpg" class="product-img"></td><td>110</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055103</td><td>草莓波堤</td><td>NT$ 50</td><td>草莓沾醬搭配Q彈波堤</td><td><img src="image/0003.jpg" class="product-img"></td><td>95</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055104</td><td>經典糖霜甜甜圈</td><td>NT$ 45</td><td>手工揉製，口感鬆軟綿密</td><td><img src="image/0004.jpg" class="product-img"></td><td>80</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055105</td><td>巧克力脆片波堤</td><td>NT$ 55</td><td>巧克力搭配酥脆脆片</td><td><img src="image/0005.jpg" class="product-img"></td><td>60</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055106</td><td>草莓夾心甜甜圈</td><td>NT$ 55</td><td>內含濃郁草莓內餡</td><td><img src="image/0006.jpg" class="product-img"></td><td>45</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055107</td><td>抹茶巧貝</td><td>NT$ 55</td><td>靜岡抹茶特調內餡</td><td><img src="image/0007.jpg" class="product-img"></td><td>85</td><td>2026-04-16<br>22:00:01</td></tr>
+
+                <tr><td>2026055201</td><td>鮮甜愛文芒果</td><td>NT$ 100</td><td>台灣特選芒果，飽滿多汁</td><td><img src="image/S1.jpg" class="product-img"></td><td>72</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055202</td><td>清香麻豆文旦</td><td>NT$ 80</td><td>嚴選老欉文旦，細緻清甜</td><td><img src="image/S2.jpg" class="product-img"></td><td>68</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055203</td><td>活力陽光香蕉</td><td>NT$ 50</td><td>產地直送，口感Ｑ彈綿密</td><td><img src="image/S3.jpg" class="product-img"></td><td>110</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055204</td><td>進口紅櫻桃</td><td>NT$ 150</td><td>空運直送，果實碩大酸甜</td><td><img src="image/S4.jpg" class="product-img"></td><td>48</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055205</td><td>清脆鮮切小黃瓜</td><td>NT$ 40</td><td>產銷履歷，口感清脆低卡</td><td><img src="image/S5.jpg" class="product-img"></td><td>62</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055206</td><td>紐西蘭奇異果</td><td>NT$ 85</td><td>富含維他命C，酸甜健康</td><td><img src="image/S6.jpg" class="product-img"></td><td>55</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055207</td><td>鮮甜多汁水蜜桃</td><td>NT$ 120</td><td>果肉細白，香氣濃郁多汁</td><td><img src="image/SS1.jpg" class="product-img"></td><td>35</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055208</td><td>屏東金鑽鳳梨</td><td>NT$ 70</td><td>果肉纖維細緻，甜度極高</td><td><img src="image/下載.jpeg" class="product-img"></td><td>40</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055209</td><td>屏東黑珍珠蓮霧</td><td>NT$ 90</td><td>色澤紅潤，清甜爽脆</td><td><img src="image/S5.jpg" class="product-img"></td><td>50</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055210</td><td>沁涼紅肉西瓜盤</td><td>NT$ 65</td><td>嚴選西瓜，果肉沙脆甜度高</td><td><img src="image/unnamed (3).jpg" class="product-img"></td><td>90</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055211</td><td>屏東無籽綠檸檬</td><td>NT$ 55</td><td>香氣強郁，適合泡茶入菜</td><td><img src="image/S1.jpg" class="product-img"></td><td>120</td><td>2026-04-16<br>22:00:01</td></tr>
+                <tr><td>2026055212</td><td>清脆甜水梨</td><td>NT$ 95</td><td>水潤飽滿，降火解膩首選</td><td><img src="image/unnamed (2).jpg" class="product-img"></td><td>60</td><td>2026-04-16<br>22:00:01</td></tr>
+            </tbody>
+        </table>
+
+        <div class="footer-text">目前共有 37 種 得正產品</div>
+    </div>
+
+</body>
+</html>
