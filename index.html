@@ -1,131 +1,688 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>目前資料庫中，得正產品的列表</title>
+    <title>漢堡王 Burger King - 火烤美味，分享快樂</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Outfit:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <style>
-        body {
-            font-family: "Times New Roman", "微軟正黑體", serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', 'Noto Sans TC', -apple-system, sans-serif; background: #F5EBDC; color: #502314; min-height: 100vh; overflow-x: hidden; padding-top: 80px; }
+
+        /* Navbar Styles */
+        .navbar { background: #502314; padding: 15px 20px; box-shadow: 0 4px 15px rgba(80, 35, 20, 0.2); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; border-bottom: 4px solid #FF8A00; }
+        .navbar-container { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        .navbar-brand-link {
             display: flex;
-            justify-content: center;
-            padding: 40px 10px;
-            background-color: white;
-            color: black;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+            transition: all 0.3s ease;
         }
-
-        /* 綠色外框容器 */
-        .outer-border {
-            border: 2px solid #228B22;
-            padding: 40px 30px;
-            width: 100%;
-            max-width: 1100px;
-            box-sizing: border-box;
-            text-align: center;
+        .navbar-brand-link:hover {
+            transform: scale(1.02);
         }
-
-        h3 {
-            font-size: 24px;
-            margin-bottom: 25px;
-            font-weight: bold;
-        }
-
-        /* 表格樣式 */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-
-        th, td {
-            border: 1px solid red; /* 紅色表格細線 */
-            padding: 12px 5px;
-            vertical-align: middle;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        th {
-            font-weight: bold;
-            background-color: #f9f9f9;
-        }
-
-        .product-img {
-            width: 65px;
-            height: 65px;
+        .navbar-brand-logo-img {
+            height: 42px;
+            width: 42px;
+            border-radius: 50%;
             object-fit: cover;
-            border: 1px solid #ddd;
+            border: 2px solid #FF8A00;
+        }
+        .navbar-brand-text {
+            font-family: 'Lilita One', 'Noto Sans TC', sans-serif;
+            font-weight: 900;
+            color: #F5EBDC;
+            font-size: 1.4rem;
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+        .navbar-left-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #502314 !important;
+            background: linear-gradient(135deg, #FF8A00 0%, #D62300 100%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(214, 35, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .navbar-logo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(214, 35, 0, 0.5);
+        }
+        #logo-cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #D62300;
+            color: white !important;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            line-height: 15px;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border: 1.5px solid #F5EBDC;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding: 0 2px;
+            box-sizing: border-box;
+        }
+        .navbar-search-container { flex-grow: 1; display: flex; justify-content: center; }
+        .navbar-search { padding: 10px 20px; border: 2px solid #502314; border-radius: 25px; font-size: 0.95rem; width: 100%; max-width: 450px; transition: all 0.3s ease; background-color: #F5EBDC; color: #502314; font-weight: 600; }
+        .navbar-search::placeholder { color: rgba(80, 35, 20, 0.6); }
+        .navbar-search:focus { outline: none; border-color: #D62300; box-shadow: 0 0 0 3px rgba(214, 35, 0, 0.25); background-color: white; }
+        .navbar-menu { display: flex; list-style: none; gap: 20px; align-items: center; margin: 0; padding: 0; }
+        .navbar-menu li { position: relative; }
+        .navbar-menu a { text-decoration: none; color: #F5EBDC; font-weight: 700; transition: color 0.3s ease; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; }
+        .navbar-menu a:hover { color: #FF8A00; }
+        .navbar-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #F5EBDC; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 菜單區塊樣式 */
+        .menu-section { background: #F5EBDC; padding: 3rem 1rem 4rem; text-align: center; }
+        .menu-title { font-family: 'Lilita One', 'Noto Sans TC', sans-serif; color: #502314; font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; margin-bottom: 0.5rem; border-bottom: 5px solid #FF8A00; display: inline-block; padding-bottom: 8px; letter-spacing: 1px; }
+        .menu-subtitle { color: #D62300; margin-bottom: 3rem; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; max-width: 1200px; margin: 0 auto; }
+        .menu-item { background: #ffffff; border-radius: 20px; padding: 1.8rem; text-align: center; color: #502314; border: 3px solid #502314; box-shadow: 6px 6px 0px #502314; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .menu-item:hover { transform: translate(-4px, -4px); box-shadow: 10px 10px 0px #502314; }
+        .menu-item-image { width: 100%; height: 180px; border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; border: 2px solid #502314; position: relative; }
+        .menu-item-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .menu-item:hover .menu-item-image img { transform: scale(1.05); }
+        .menu-item-name { font-size: 1.25rem; font-weight: 900; margin-bottom: 0.5rem; color: #502314; }
+        .menu-item-price { font-size: 1.15rem; font-weight: 800; color: #D62300; margin-bottom: 1rem; }
+        .menu-item-actions { display: flex; gap: 0.8rem; margin-top: auto; justify-content: center; width: 100%; }
+        .menu-button { padding: 0.8rem 1.2rem; font-size: 1rem; border-radius: 30px; flex: 1; text-align: center; transition: all 0.3s ease; cursor: pointer; border: 3px solid #502314; font-weight: 900; }
+        .menu-button.buy { background-color: #FF8A00; color: #502314; box-shadow: 2px 2px 0px #502314; }
+        .menu-button.buy:hover { background-color: #D62300; color: white; transform: translateY(-1px); }
+        .menu-button.learn-more { background-color: white; color: #502314; text-decoration: none; box-shadow: 2px 2px 0px #502314; }
+        .menu-button.learn-more:hover { background-color: #F5EBDC; transform: translateY(-1px); }
+
+        /* Footer Styles */
+        .footer { background: #502314; padding: 4rem 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2.5rem; border-top: 5px solid #FF8A00; color: #F5EBDC; }
+        .footer-section { display: flex; flex-direction: column; gap: 1.2rem; min-width: 0; }
+        .footer-section h3 { color: #FF8A00; font-size: 1.4rem; font-weight: 900; position: relative; padding-bottom: 0.8rem; margin-bottom: 0.5rem; font-family: 'Lilita One', sans-serif; letter-spacing: 1px; }
+        .footer-section h3::after { content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 3px; background: #D62300; border-radius: 2px; }
+        .footer-section p, .footer-section ul li { color: #F5EBDC; font-size: 0.95rem; line-height: 1.6; margin: 0; }
+        .footer-section ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.8rem; }
+        .footer-section ul li { display: flex; align-items: center; transition: transform 0.3s ease; white-space: nowrap; }
+        .footer-section ul li a { text-decoration: none; color: inherit; width: 100%; display: inline-block; font-weight: 600; }
+        .footer-section ul li:hover { transform: translateX(5px); color: #FF8A00; }
+        .social-links { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem; }
+        .social-links a { text-decoration: none; color: #502314; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; transition: all 0.3s ease; background: #FF8A00; display: inline-flex; align-items: center; white-space: nowrap; font-weight: bold; border: 2px solid #502314; }
+        .social-links a:hover { background: #D62300; color: white; transform: translateY(-2px); }
+        .social-logo { width: 20px; height: 20px; margin-right: 8px; }
+        
+        .mobile-member-display {
+            display: none;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #502314;
+            background-color: #FF8A00;
+            padding: 8px 16px;
+            border-radius: 20px;
+            white-space: nowrap;
+            align-items: center;
+            gap: 5px;
+            border: 2px solid #502314;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            height: 38px;
+        }
+        .mobile-member-display:hover {
+            background-color: #D62300;
+            color: white;
+            transform: translateY(-2px);
         }
 
-        .footer-text {
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 20px;
+        @media (max-width: 768px) {
+            .navbar-menu { display: none; flex-direction: column; background: #502314; position: absolute; top: 100%; left: 0; right: 0; width: 100%; padding: 15px 0; border-top: 2px solid #FF8A00; }
+            .navbar-menu.active { display: flex; } .navbar-toggle { display: block; }
+            .footer { padding: 3rem 1.5rem; grid-template-columns: 1fr; text-align: center; gap: 3rem; }
+            .footer-section h3::after { left: 50%; transform: translateX(-50%); } .social-links { justify-content: center; }
+            
+            .navbar.logged-in .navbar-search-container {
+                display: none !important;
+            }
+            .navbar.logged-in .mobile-member-display {
+                display: flex !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .navbar-brand-text { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="outer-border">
-        <h3>目前資料庫中，得正 dejeng 的所有產品列表</h3>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>產品編碼</th>
-                    <th>產品名稱</th>
-                    <th>售價</th>
-                    <th>產品描述</th>
-                    <th>產品圖示</th>
-                    <th>現有庫存</th>
-                    <th>最後異動時間</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>2026055001</td><td>水之森玄米抹茶</td><td>NT$ 65</td><td>嚴選靜岡抹茶搭配焙煎玄米</td><td><img src="image/01.jpg" class="product-img"></td><td>120</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055002</td><td>英倫伯爵紅茶</td><td>NT$ 55</td><td>佛手柑香氣與紅茶的經典結合</td><td><img src="image/02.jpg" class="product-img"></td><td>115</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055003</td><td>珍珠鮮奶</td><td>NT$ 75</td><td>Q彈手作珍珠搭配直送鮮乳</td><td><img src="image/03.jpg" class="product-img"></td><td>108</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055004</td><td>手炒黑糖鮮奶</td><td>NT$ 80</td><td>職人手工慢炒黑糖，香氣濃郁</td><td><img src="image/04.jpg" class="product-img"></td><td>95</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055005</td><td>嫩仙草凍奶</td><td>NT$ 70</td><td>滑嫩鮮草搭配濃郁奶茶</td><td><img src="image/05.jpg" class="product-img"></td><td>88</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055006</td><td>海鹽芒果綠</td><td>NT$ 65</td><td>芒果鮮甜與微鹹海鹽奶蓋</td><td><img src="image/06.jpg" class="product-img"></td><td>76</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055007</td><td>琥珀高峰烏龍</td><td>NT$ 55</td><td>炭焙香氣重，茶韻悠長</td><td><img src="image/07.jpg" class="product-img"></td><td>150</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055008</td><td>茉香綠茶拿鐵</td><td>NT$ 65</td><td>清新茉莉花香與鮮奶交織</td><td><img src="image/08.jpg" class="product-img"></td><td>102</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055009</td><td>芋頭鮮奶</td><td>NT$ 85</td><td>手作芋泥，口感綿密扎實</td><td><img src="image/09.jpg" class="product-img"></td><td>65</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055010</td><td>果漾微甜氣泡飲</td><td>NT$ 75</td><td>清爽氣泡搭配季節果漿</td><td><img src="image/10.jpg" class="product-img"></td><td>92</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055011</td><td>經典冰水果茶</td><td>NT$ 80</td><td>多種鮮切水果與茶湯結合</td><td><img src="image/11.jpg" class="product-img"></td><td>80</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055012</td><td>季節限定特調</td><td>NT$ 85</td><td>主廚當季推薦，驚喜口感</td><td><img src="image/12.jpg" class="product-img"></td><td>50</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055013</td><td>招牌綜合果茶</td><td>NT$ 90</td><td>得正招牌果茶，豐富多層次</td><td><img src="image/13.jpg" class="product-img"></td><td>70</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055027</td><td>焙烏龍鮮奶</td><td>NT$ 70</td><td>深焙烏龍與鮮奶完美比例</td><td><img src="image/27.jpg" class="product-img"></td><td>110</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055015</td><td>柚見冰茶</td><td>NT$ 65</td><td>葡萄柚果肉清爽微苦甘甜</td><td><img src="image/15.jpg" class="product-img"></td><td>85</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055031</td><td>蜜桃春烏龍</td><td>NT$ 75</td><td>甜蜜桃果香與春烏龍茶香</td><td><img src="image/31.jpg" class="product-img"></td><td>96</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055017</td><td>芝士奶蓋紅茶</td><td>NT$ 70</td><td>濃厚芝士奶蓋搭配純紅茶</td><td><img src="image/17.jpg" class="product-img"></td><td>77</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055018</td><td>桂花烏龍凍飲</td><td>NT$ 65</td><td>手工桂花凍，芬芳清爽</td><td><img src="image/18.jpg" class="product-img"></td><td>105</td><td>2026-04-16<br>22:00:01</td></tr>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-left-container">
+                <a href="index.html" class="navbar-brand-link">
+                    <img src="image/logo.png" alt="漢堡王 Burger King" class="navbar-brand-logo-img">
+                    <span class="navbar-brand-text">漢堡王 Burger King</span>
+                </a>
+                <a href="cart.html" class="navbar-logo">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="logo-cart-badge" style="display: none;">0</span>
+                </a>
+            </div>
+            <div class="navbar-search-container">
+                <input type="search" id="searchInput" class="navbar-search" placeholder="搜尋經典華堡、薯條、冷飲...">
+            </div>
+            <a href="profile.html" id="mobile-member-display" class="mobile-member-display"></a>
+            <button class="navbar-toggle" id="navbarToggle">☰</button>
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> 首頁</a></li>
+                <li><a href="#drinks"><i class="fa-solid fa-burger"></i> 火烤漢堡</a></li>
+                <li><a href="#donuts"><i class="fa-solid fa-cheese"></i> 美味配餐</a></li>
+                <li><a href="#fruits"><i class="fa-solid fa-whiskey-glass"></i> 沁涼飲料</a></li>
+                <li><a href="leaderboard.html"><i class="fa-solid fa-crown"></i> 排行榜</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> 購物車 <span id="cart-badge" style="background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; vertical-align: top; display: none;">0</span></a></li>
+                
+                <li><a href="database_demo.html" style="color: #e74c3c; font-weight: bold;"><i class="fa-solid fa-database"></i> 資料庫</a></li>
 
-                <tr><td>2026055101</td><td>蜜糖波堤</td><td>NT$ 45</td><td>口感Q彈，裹上經典糖衣</td><td><img src="image/0001.jpg" class="product-img"></td><td>126</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055102</td><td>雙層巧克力波堤</td><td>NT$ 50</td><td>巧克力波堤裹黑巧克力</td><td><img src="image/0002.jpg" class="product-img"></td><td>110</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055103</td><td>草莓波堤</td><td>NT$ 50</td><td>草莓沾醬搭配Q彈波堤</td><td><img src="image/0003.jpg" class="product-img"></td><td>95</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055104</td><td>經典糖霜甜甜圈</td><td>NT$ 45</td><td>手工揉製，口感鬆軟綿密</td><td><img src="image/0004.jpg" class="product-img"></td><td>80</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055105</td><td>巧克力脆片波堤</td><td>NT$ 55</td><td>巧克力搭配酥脆脆片</td><td><img src="image/0005.jpg" class="product-img"></td><td>60</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055106</td><td>草莓夾心甜甜圈</td><td>NT$ 55</td><td>內含濃郁草莓內餡</td><td><img src="image/0006.jpg" class="product-img"></td><td>45</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055107</td><td>抹茶巧貝</td><td>NT$ 55</td><td>靜岡抹茶特調內餡</td><td><img src="image/0007.jpg" class="product-img"></td><td>85</td><td>2026-04-16<br>22:00:01</td></tr>
+                <li id="nav-login"><a href="login.html"><i class="fa-solid fa-user"></i> 登入/註冊</a></li>
+                <li id="nav-user" style="display:none;"><a href="profile.html" id="user-display" style="color:#1a73e8; font-weight:bold;"></a></li>
+                <li id="nav-logout" style="display:none;"><a href="#" id="btn-logout" style="color:#e74c3c;">登出</a></li>
+            </ul>
+        </div>
+    </nav>
 
-                <tr><td>2026055201</td><td>鮮甜愛文芒果</td><td>NT$ 100</td><td>台灣特選芒果，飽滿多汁</td><td><img src="image/S1.jpg" class="product-img"></td><td>72</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055202</td><td>清香麻豆文旦</td><td>NT$ 80</td><td>嚴選老欉文旦，細緻清甜</td><td><img src="image/S2.jpg" class="product-img"></td><td>68</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055203</td><td>活力陽光香蕉</td><td>NT$ 50</td><td>產地直送，口感Ｑ彈綿密</td><td><img src="image/S3.jpg" class="product-img"></td><td>110</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055204</td><td>進口紅櫻桃</td><td>NT$ 150</td><td>空運直送，果實碩大酸甜</td><td><img src="image/S4.jpg" class="product-img"></td><td>48</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055205</td><td>清脆鮮切小黃瓜</td><td>NT$ 40</td><td>產銷履歷，口感清脆低卡</td><td><img src="image/S5.jpg" class="product-img"></td><td>62</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055206</td><td>紐西蘭奇異果</td><td>NT$ 85</td><td>富含維他命C，酸甜健康</td><td><img src="image/S6.jpg" class="product-img"></td><td>55</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055207</td><td>鮮甜多汁水蜜桃</td><td>NT$ 120</td><td>果肉細白，香氣濃郁多汁</td><td><img src="image/SS1.jpg" class="product-img"></td><td>35</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055208</td><td>屏東金鑽鳳梨</td><td>NT$ 70</td><td>果肉纖維細緻，甜度極高</td><td><img src="image/下載.jpeg" class="product-img"></td><td>40</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055209</td><td>屏東黑珍珠蓮霧</td><td>NT$ 90</td><td>色澤紅潤，清甜爽脆</td><td><img src="image/S5.jpg" class="product-img"></td><td>50</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055210</td><td>沁涼紅肉西瓜盤</td><td>NT$ 65</td><td>嚴選西瓜，果肉沙脆甜度高</td><td><img src="image/unnamed (3).jpg" class="product-img"></td><td>90</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055211</td><td>屏東無籽綠檸檬</td><td>NT$ 55</td><td>香氣強郁，適合泡茶入菜</td><td><img src="image/S1.jpg" class="product-img"></td><td>120</td><td>2026-04-16<br>22:00:01</td></tr>
-                <tr><td>2026055212</td><td>清脆甜水梨</td><td>NT$ 95</td><td>水潤飽滿，降火解膩首選</td><td><img src="image/unnamed (2).jpg" class="product-img"></td><td>60</td><td>2026-04-16<br>22:00:01</td></tr>
-            </tbody>
-        </table>
-
-        <div class="footer-text">目前共有 37 種 得正產品</div>
+    <div id="no-result-msg" style="display: none; color: #e74c3c; font-size: 1.2rem; font-weight: bold; text-align: center; margin-top: 2rem; padding-top: 20px;">
+        沒有找到符合的商品，請嘗試其他關鍵字。
     </div>
 
+        <section id="drinks" class="menu-section">
+        <h2 class="menu-title">🍔 火烤漢堡</h2>
+        <p class="menu-subtitle">Flame-Grilled Burgers</p>
+        <div class="menu-grid">
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_whopper.png" alt="經典華堡"></div><div class="menu-item-name">經典華堡</div><div class="menu-item-price">NT$ 139</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea01')">加入購物車</button><a href="product.html?id=tea01" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_double.png" alt="雙層華堡"></div><div class="menu-item-name">雙層華堡</div><div class="menu-item-price">NT$ 179</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea02')">加入購物車</button><a href="product.html?id=tea02" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_double.png" alt="重磅培根雙層牛肉堡"></div><div class="menu-item-name">重磅培根雙層牛肉堡</div><div class="menu-item-price">NT$ 189</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea03')">加入購物車</button><a href="product.html?id=tea03" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_whopper.png" alt="起司華堡"></div><div class="menu-item-name">起司華堡</div><div class="menu-item-price">NT$ 154</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea04')">加入購物車</button><a href="product.html?id=tea04" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_whopper.png" alt="小華堡"></div><div class="menu-item-name">小華堡</div><div class="menu-item-price">NT$ 99</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea05')">加入購物車</button><a href="product.html?id=tea05" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_chicken.png" alt="經典脆雞堡"></div><div class="menu-item-name">經典脆雞堡</div><div class="menu-item-price">NT$ 89</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea06')">加入購物車</button><a href="product.html?id=tea06" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_double.png" alt="雙層起司牛肉堡"></div><div class="menu-item-name">雙層起司牛肉堡</div><div class="menu-item-price">NT$ 109</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea07')">加入購物車</button><a href="product.html?id=tea07" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_fish.png" alt="華鱈魚堡"></div><div class="menu-item-name">華鱈魚堡</div><div class="menu-item-price">NT$ 99</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea08')">加入購物車</button><a href="product.html?id=tea08" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_double.png" alt="美式花生雙層牛肉堡"></div><div class="menu-item-name">美式花生雙層牛肉堡</div><div class="menu-item-price">NT$ 149</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea09')">加入購物車</button><a href="product.html?id=tea09" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_chicken.png" alt="勁濃培根烤雞腿堡"></div><div class="menu-item-name">勁濃培根烤雞腿堡</div><div class="menu-item-price">NT$ 139</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea10')">加入購物車</button><a href="product.html?id=tea10" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_whopper.png" alt="辣味華堡"></div><div class="menu-item-name">辣味華堡</div><div class="menu-item-price">NT$ 139</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea11')">加入購物車</button><a href="product.html?id=tea11" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_chicken.png" alt="起司脆雞堡"></div><div class="menu-item-name">起司脆雞堡</div><div class="menu-item-price">NT$ 99</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea12')">加入購物車</button><a href="product.html?id=tea12" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_whopper.png" alt="BBQ手撕豬肉堡"></div><div class="menu-item-name">BBQ手撕豬肉堡</div><div class="menu-item-price">NT$ 129</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea13')">加入購物車</button><a href="product.html?id=tea13" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_whopper.png" alt="火烤純牛肉堡"></div><div class="menu-item-name">火烤純牛肉堡</div><div class="menu-item-price">NT$ 79</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea27')">加入購物車</button><a href="product.html?id=tea27" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_chicken.png" alt="蜂蜜芥末脆雞堡"></div><div class="menu-item-name">蜂蜜芥末脆雞堡</div><div class="menu-item-price">NT$ 99</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea28')">加入購物車</button><a href="product.html?id=tea28" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_chicken.png" alt="蜜桃春烏龍"></div><div class="menu-item-name">辣味雙層脆雞堡</div><div class="menu-item-price">NT$ 119</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea31')">加入購物車</button><a href="product.html?id=tea31" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_chicken.png" alt="經典卡拉雞腿堡"></div><div class="menu-item-name">經典卡拉雞腿堡</div><div class="menu-item-price">NT$ 119</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea32')">加入購物車</button><a href="product.html?id=tea32" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_whopper.png" alt="花生培根牛肉堡"></div><div class="menu-item-name">花生培根牛肉堡</div><div class="menu-item-price">NT$ 129</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('tea33')">加入購物車</button><a href="product.html?id=tea33" class="menu-button learn-more">詳細</a></div></div>
+        </div>
+    </section>
+
+        <section id="donuts" class="menu-section" style="background: #FFF8F0;">
+        <h2 class="menu-title" style="border-color: #FF8A00;">🍟 美味配餐</h2>
+        <p class="menu-subtitle">Sides & Snacks</p>
+        <div class="menu-grid">
+            <div class="menu-item"><div class="menu-item-image"><img src="image/side_fries.png" alt="美味薯條"></div><div class="menu-item-name">美味薯條</div><div class="menu-item-price">NT$ 49</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('donut01')">加入購物車</button><a href="product.html?id=donut01" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/side_onion_rings.png" alt="酥炸洋蔥圈"></div><div class="menu-item-name">酥炸洋蔥圈</div><div class="menu-item-price">NT$ 59</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('donut02')">加入購物車</button><a href="product.html?id=donut02" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/side_nuggets.png" alt="黃金雞塊"></div><div class="menu-item-name">黃金雞塊</div><div class="menu-item-price">NT$ 59</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('donut03')">加入購物車</button><a href="product.html?id=donut03" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/side_fries.png" alt="美味薯球"></div><div class="menu-item-name">美味薯球</div><div class="menu-item-price">NT$ 49</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('donut04')">加入購物車</button><a href="product.html?id=donut04" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/logo.png" alt="香甜蘋果派"></div><div class="menu-item-name">香甜蘋果派</div><div class="menu-item-price">NT$ 45</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('donut05')">加入購物車</button><a href="product.html?id=donut05" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/burger_chicken.png" alt="酥炸雞翅"></div><div class="menu-item-name">酥炸雞翅</div><div class="menu-item-price">NT$ 69</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('donut06')">加入購物車</button><a href="product.html?id=donut06" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/side_fries.png" alt="起司濃汁薯條"></div><div class="menu-item-name">起司濃汁薯條</div><div class="menu-item-price">NT$ 69</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('donut07')">加入購物車</button><a href="product.html?id=donut07" class="menu-button learn-more">詳細</a></div></div>
+        </div>
+    </section>
+
+        <section id="fruits" class="menu-section" style="background: #F5EBDC;">
+        <h2 class="menu-title" style="border-color: #D62300;">🥤 沁涼飲料 / 甜點</h2>
+        <p class="menu-subtitle">Refreshing Drinks & Desserts</p>
+        <div class="menu-grid">
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="可口可樂"></div><div class="menu-item-name">可口可樂</div><div class="menu-item-price">NT$ 40</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit01')">加入購物車</button><a href="product.html?id=fruit01" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="雪碧"></div><div class="menu-item-name">雪碧</div><div class="menu-item-price">NT$ 40</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit02')">加入購物車</button><a href="product.html?id=fruit02" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="檸檬紅茶"></div><div class="menu-item-name">檸檬紅茶</div><div class="menu-item-price">NT$ 40</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit03')">加入購物車</button><a href="product.html?id=fruit03" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="無糖綠茶"></div><div class="menu-item-name">無糖綠茶</div><div class="menu-item-price">NT$ 40</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit04')">加入購物車</button><a href="product.html?id=fruit04" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="研磨美式咖啡"></div><div class="menu-item-name">研磨美式咖啡</div><div class="menu-item-price">NT$ 50</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit05')">加入購物車</button><a href="product.html?id=fruit05" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="經典熱拿鐵"></div><div class="menu-item-name">經典熱拿鐵</div><div class="menu-item-price">NT$ 60</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit06')">加入購物車</button><a href="product.html?id=fruit06" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/logo.png" alt="巧克力聖代"></div><div class="menu-item-name">巧克力聖代</div><div class="menu-item-price">NT$ 55</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit07')">加入購物車</button><a href="product.html?id=fruit07" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/logo.png" alt="草莓聖代"></div><div class="menu-item-name">草莓聖代</div><div class="menu-item-price">NT$ 55</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit08')">加入購物車</button><a href="product.html?id=fruit08" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="100%柳橙汁"></div><div class="menu-item-name">100%柳橙汁</div><div class="menu-item-price">NT$ 50</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit09')">加入購物車</button><a href="product.html?id=fruit09" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="巧克力奶昔"></div><div class="menu-item-name">巧克力奶昔</div><div class="menu-item-price">NT$ 65</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit10')">加入購物車</button><a href="product.html?id=fruit10" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="香草奶昔"></div><div class="menu-item-name">香草奶昔</div><div class="menu-item-price">NT$ 65</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit11')">加入購物車</button><a href="product.html?id=fruit11" class="menu-button learn-more">詳細</a></div></div>
+            <div class="menu-item"><div class="menu-item-image"><img src="image/drink_cola.png" alt="冰鎮青草茶"></div><div class="menu-item-name">冰鎮青草茶</div><div class="menu-item-price">NT$ 40</div><div class="menu-item-actions"><button class="menu-button buy" onclick="addToCart('fruit12')">加入購物車</button><a href="product.html?id=fruit12" class="menu-button learn-more">詳細</a></div></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-section">
+                        <h3>品牌區塊</h3>
+            <p>漢堡王 Burger King - 火烤美味，分享快樂</p>
+            <div class="social-links">
+                <a href="https://instagram.com" target="_blank"><img src="image/Instagram-logo.png" alt="Instagram Logo" class="social-logo"> Instagram</a>
+                <a href="https://line.me" target="_blank"><img src="image/line-logo.png" alt="LINE Logo" class="social-logo"> LINE</a>
+            </div>
+        </div>
+        <div class="footer-section">
+            <h3>BUSINESS 商業區塊</h3>
+            <ul>
+                <li><a href="#drinks">🍔 火烤漢堡</a></li>
+                <li><a href="#donuts">🍟 美味配餐</a></li>
+                <li><a href="#fruits">🥤 沁涼飲料</a></li>
+                <li><a href="leaderboard.html">⭐ 熱銷排行</a></li>
+                <li><a href="database_demo.html" style="color:#1a73e8; font-weight:bold;">📦 資料庫展示頁</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>CONTACT 聯繫區塊</h3>
+            <p>📧 電子郵件：a113280055@gm.usc.edu.tw</p>
+            <p>📞 電話：0952702813</p>
+            <p>🏪 地址：台北市大安區忠孝東路四段123號</p>
+        </div>
+        <div class="footer-section">
+            <h3>版權資訊</h3>
+            <p>© 2026 漢堡王 Burger King. All rights reserved.</p>
+            <p>設計製作者：薛翔謙</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        const firebaseConfig = { apiKey: "AIzaSyC-LcCfcPYCYAQZ7n45YCe6tCY_jb-ygvI", authDomain: "sonicboom-shop.firebaseapp.com", projectId: "sonicboom-shop", storageBucket: "sonicboom-shop.firebasestorage.app", messagingSenderId: "976804831944", appId: "1:976804831944:web:6ede6a95196478bd49bbfd", measurementId: "G-3FEKWL0QXZ" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            const navLogin = document.getElementById('nav-login');
+            const navUser = document.getElementById('nav-user');
+            const navLogout = document.getElementById('nav-logout');
+            const userDisplay = document.getElementById('user-display');
+            const navbar = document.querySelector('.navbar');
+            const mobileMemberDisplay = document.getElementById('mobile-member-display');
+
+            if (user) {
+                navLogin.style.display = 'none';
+                navUser.style.display = 'block';
+                navLogout.style.display = 'block';
+                const memberName = user.displayName || user.email.split('@')[0];
+                userDisplay.innerHTML = `<i class="fa-solid fa-user-check"></i> 會員 ${memberName}`;
+                if (mobileMemberDisplay) {
+                    mobileMemberDisplay.innerHTML = `<i class="fa-solid fa-user-check" style="color: #1a73e8;"></i> 會員:${memberName}`;
+                }
+                if (navbar) {
+                    navbar.classList.add('logged-in');
+                }
+            } else {
+                navLogin.style.display = 'block';
+                navUser.style.display = 'none';
+                navLogout.style.display = 'none';
+                if (navbar) {
+                    navbar.classList.remove('logged-in');
+                }
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            if(confirm("確定要登出嗎？")) { localStorage.removeItem('dejeng_cart'); signOut(auth).then(() => { window.location.reload(); }); }
+        });
+    </script>
+
+    <script>
+        function addToCart(itemId) {
+            let cart = JSON.parse(localStorage.getItem('dejeng_cart')) || [];
+            let defSugar = itemId.startsWith('tea') ? '正常醬' : (itemId.startsWith('donut') ? '正常' : '中杯');
+            let defIce = itemId.startsWith('tea') ? '正常' : (itemId.startsWith('donut') ? '附糖醋醬' : '正常冰');
+            let alertMsg = itemId.startsWith('tea') ? '(預設正常醬、無調整配料)' : (itemId.startsWith('donut') ? '(預設口味正常、附糖醋醬)' : '(預設中杯、正常冰)');
+
+            // Find product name in DOM
+            let pName = "";
+            const items = document.querySelectorAll('.menu-item');
+            for (let item of items) {
+                const btn = item.querySelector('.buy');
+                if (btn) {
+                    const match = btn.getAttribute('onclick').match(/'([^']+)'/);
+                    if (match && match[1] === itemId) {
+                        const nameNode = item.querySelector('.menu-item-name');
+                        if (nameNode) {
+                            pName = nameNode.innerText.trim();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Verify stock
+            const inventory = syncInventory();
+            const stock = (pName && inventory[pName] !== undefined) ? inventory[pName] : 100;
+            const existingIndex = cart.findIndex(item => item.id === itemId && item.sugar === defSugar && item.ice === defIce);
+            let currentQtyInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
+            
+            if (currentQtyInCart + 1 > stock) {
+                alert(`抱歉，【${pName || itemId}】已無足夠庫存！目前庫存剩餘 ${stock} 件，您的購物車中已有 ${currentQtyInCart} 件。`);
+                return;
+            }
+
+            if (existingIndex > -1) { cart[existingIndex].qty += 1; } 
+            else { cart.push({ id: itemId, qty: 1, sugar: defSugar, ice: defIce }); }
+            
+            localStorage.setItem('dejeng_cart', JSON.stringify(cart));
+            updateCartBadge();
+            alert(`商品已加入購物車！${alertMsg}`);
+            window.location.href = "cart.html";
+        }
+
+        function updateCartBadge() {
+            let cart = JSON.parse(localStorage.getItem('dejeng_cart')) || [];
+            let totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            let badge = document.getElementById('cart-badge');
+            if(badge) {
+                if(totalQty > 0) {
+                    badge.style.display = 'inline-block';
+                    badge.innerText = totalQty;
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+            let logoBadge = document.getElementById('logo-cart-badge');
+            if(logoBadge) {
+                if(totalQty > 0) {
+                    logoBadge.style.display = 'inline-block';
+                    logoBadge.innerText = totalQty;
+                } else {
+                    logoBadge.style.display = 'none';
+                }
+            }
+        }
+        
+        function syncInventory() {
+            let baseInventory = JSON.parse(localStorage.getItem('dejeng_base_inventory')) || {};
+            let baseInvUpdated = false;
+            
+            const allProducts = [
+                "經典華堡", "雙層華堡", "重磅培根雙層牛肉堡", "起司華堡", "小華堡", "經典脆雞堡",
+                "雙層起司牛肉堡", "華鱈魚堡", "美式花生雙層牛肉堡", "勁濃培根烤雞腿堡", "辣味華堡",
+                "起司脆雞堡", "BBQ手撕豬肉堡", "火烤純牛肉堡", "蜂蜜芥末脆雞堡", "辣味雙層脆雞堡",
+                "經典卡拉雞腿堡", "花生培根牛肉堡", "美味薯條", "酥炸洋蔥圈", "黃金雞塊", "美味薯球",
+                "香甜蘋果派", "酥炸雞翅", "起司濃汁薯條", "可口可樂", "雪碧", "檸檬紅茶", "無糖綠茶",
+                "研磨美式咖啡", "經典熱拿鐵", "巧克力聖代", "草莓聖代", "100%柳橙汁", "巧克力奶昔",
+                "香草奶昔", "冰鎮青草茶"
+            ];
+            
+            allProducts.forEach(name => {
+                if (baseInventory[name] === undefined) {
+                    baseInventory[name] = Math.floor(Math.random() * 101) + 20; // 隨機庫存 20-120
+                    baseInvUpdated = true;
+                }
+            });
+            
+            if (baseInvUpdated) {
+                localStorage.setItem('dejeng_base_inventory', JSON.stringify(baseInventory));
+            }
+            
+            const orders = JSON.parse(localStorage.getItem('dejeng_orders')) || [];
+            const computedInventory = {};
+            for (let name in baseInventory) {
+                computedInventory[name] = baseInventory[name];
+            }
+            
+            orders.forEach(order => {
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(itemStr => {
+                        const match = itemStr.match(/(.*?)(?:\s*\(.*?\))?\s*x(\d+)/);
+                        if (match) {
+                            const pName = match[1].trim();
+                            const pQty = parseInt(match[2]);
+                            if (computedInventory[pName] !== undefined) {
+                                computedInventory[pName] -= pQty;
+                            } else {
+                                baseInventory[pName] = Math.floor(Math.random() * 101) + 20;
+                                baseInvUpdated = true;
+                                computedInventory[pName] = baseInventory[pName] - pQty;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            if (baseInvUpdated) {
+                localStorage.setItem('dejeng_base_inventory', JSON.stringify(baseInventory));
+            }
+            
+            localStorage.setItem('dejeng_computed_inventory', JSON.stringify(computedInventory));
+            return computedInventory;
+        }
+        
+        function updateProductStatus() {
+            const inventory = syncInventory();
+            const statusSettings = JSON.parse(localStorage.getItem('dejeng_product_settings')) || {};
+            
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const btn = item.querySelector('.buy');
+                if(!btn) return;
+                const match = btn.getAttribute('onclick').match(/'([^']+)'/);
+                if(!match) return;
+                
+                const productId = match[1];
+                const nameNode = item.querySelector('.menu-item-name');
+                const pName = nameNode ? nameNode.innerText.trim() : '';
+                
+                let isSoldOut = inventory[pName] !== undefined && inventory[pName] <= 0;
+                let isDelisted = statusSettings[pName] && statusSettings[pName].status === 'delisted';
+                
+                let imageContainer = item.querySelector('.menu-item-image');
+                let existingOverlay = imageContainer.querySelector('.status-overlay');
+                if(existingOverlay) existingOverlay.remove();
+                
+                if(isDelisted) {
+                    let overlay = document.createElement('div');
+                    overlay.className = 'status-overlay';
+                    overlay.style = 'position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); color: white; display:flex; align-items:center; justify-content:center; font-size: 1.5rem; font-weight:bold; z-index:10; border-radius:15px;';
+                    overlay.innerText = '已下架';
+                    imageContainer.style.position = 'relative';
+                    imageContainer.appendChild(overlay);
+                    
+                    btn.disabled = true;
+                    btn.style.background = '#888';
+                    btn.style.cursor = 'not-allowed';
+                    btn.innerText = '已下架';
+                } else if(isSoldOut) {
+                    let overlay = document.createElement('div');
+                    overlay.className = 'status-overlay';
+                    overlay.style = 'position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(231,76,60,0.7); color: white; display:flex; align-items:center; justify-content:center; font-size: 1.5rem; font-weight:bold; z-index:10;';
+                    overlay.innerText = '已完售';
+                    imageContainer.style.position = 'relative';
+                    imageContainer.appendChild(overlay);
+                    
+                    btn.disabled = true;
+                    btn.style.background = '#ccc';
+                    btn.style.cursor = 'not-allowed';
+                    btn.innerText = '已完售';
+                }
+
+                // New remaining stock badge display logic
+                let stock = inventory[pName] !== undefined ? inventory[pName] : 100;
+                let stockEl = item.querySelector('.menu-item-stock');
+                if (!stockEl) {
+                    stockEl = document.createElement('div');
+                    stockEl.className = 'menu-item-stock';
+                    stockEl.style.fontSize = '0.8rem';
+                    stockEl.style.fontWeight = '600';
+                    stockEl.style.marginBottom = '10px';
+                    stockEl.style.padding = '4px 10px';
+                    stockEl.style.borderRadius = '12px';
+                    stockEl.style.display = 'inline-flex';
+                    stockEl.style.alignItems = 'center';
+                    stockEl.style.gap = '5px';
+                    
+                    const priceEl = item.querySelector('.menu-item-price');
+                    if (priceEl) {
+                        priceEl.parentNode.insertBefore(stockEl, priceEl.nextSibling);
+                    } else {
+                        item.appendChild(stockEl);
+                    }
+                }
+                
+                if (isDelisted) {
+                    stockEl.style.color = '#7f8c8d';
+                    stockEl.style.backgroundColor = '#f0f3f4';
+                    stockEl.innerHTML = `<i class="fa-solid fa-box-archive"></i> 庫存: --`;
+                } else if (stock <= 0) {
+                    stockEl.style.color = '#e74c3c';
+                    stockEl.style.backgroundColor = '#fdedec';
+                    stockEl.innerHTML = `<i class="fa-solid fa-box-archive"></i> 庫存剩下: 0`;
+                } else if (stock <= 10) {
+                    stockEl.style.color = '#e67e22';
+                    stockEl.style.backgroundColor = '#fdf2e9';
+                    stockEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> 僅剩: ${stock}`;
+                } else {
+                    stockEl.style.color = '#27ae60';
+                    stockEl.style.backgroundColor = '#e8f8f5';
+                    stockEl.innerHTML = `<i class="fa-solid fa-box-open"></i> 庫存剩下: ${stock}`;
+                }
+
+                // 促銷特價顯示邏輯
+                const priceEl = item.querySelector('.menu-item-price');
+                if (priceEl) {
+                    if (!priceEl.dataset.originalPrice) {
+                        const origText = priceEl.innerText.trim();
+                        const numMatch = origText.match(/\d+/);
+                        if (numMatch) {
+                            priceEl.dataset.originalPrice = numMatch[0];
+                        }
+                    }
+                    const originalPrice = parseInt(priceEl.dataset.originalPrice, 10);
+                    const promoPrice = statusSettings[pName]?.promoPrice;
+                    
+                    let saleBadge = imageContainer.querySelector('.sale-badge');
+                    if (promoPrice && promoPrice < originalPrice) {
+                        priceEl.innerHTML = `<span style="text-decoration: line-through; color: #95a5a6; font-size: 0.9rem; margin-right: 5px;">NT$ ${originalPrice}</span><span style="color: #e74c3c; font-weight: bold; font-size: 1.15rem;">NT$ ${promoPrice}</span>`;
+                        
+                        if (!saleBadge && !isDelisted && !isSoldOut) {
+                            saleBadge = document.createElement('div');
+                            saleBadge.className = 'sale-badge';
+                            saleBadge.style = 'position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #ff416c, #ff4b2b); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; z-index: 5; box-shadow: 0 4px 8px rgba(255, 65, 108, 0.4); border: 1px solid rgba(255,255,255,0.2); pointer-events: none; animation: pulse-sale 2s infinite;';
+                            saleBadge.innerHTML = `<i class="fa-solid fa-fire"></i> SALE`;
+                            imageContainer.style.position = 'relative';
+                            imageContainer.appendChild(saleBadge);
+                        }
+                    } else {
+                        priceEl.innerHTML = `NT$ ${originalPrice}`;
+                        if (saleBadge) saleBadge.remove();
+                    }
+                    
+                    // 如果商品已下架或已完售，應移除 SALE 徽章以免干擾畫面
+                    if ((isDelisted || isSoldOut) && saleBadge) {
+                        saleBadge.remove();
+                    }
+                }
+            });
+
+            // 將特價商品排列在最上面
+            document.querySelectorAll('.menu-grid').forEach(grid => {
+                const items = Array.from(grid.querySelectorAll('.menu-item'));
+                
+                // 先給每個 item 標記一個初始 index，便於穩定排序
+                items.forEach((item, index) => {
+                    if (item.dataset.originalIndex === undefined) {
+                        item.dataset.originalIndex = index;
+                    }
+                });
+
+                items.sort((a, b) => {
+                    const nameA = a.querySelector('.menu-item-name')?.innerText.trim() || '';
+                    const nameB = b.querySelector('.menu-item-name')?.innerText.trim() || '';
+                    
+                    const priceElA = a.querySelector('.menu-item-price');
+                    const priceElB = b.querySelector('.menu-item-price');
+                    const origA = priceElA ? (parseInt(priceElA.dataset.originalPrice, 10) || 0) : 0;
+                    const origB = priceElB ? (parseInt(priceElB.dataset.originalPrice, 10) || 0) : 0;
+                    
+                    const promoA = parseInt(statusSettings[nameA]?.promoPrice, 10) || 0;
+                    const promoB = parseInt(statusSettings[nameB]?.promoPrice, 10) || 0;
+                    
+                    const isDelistedA = statusSettings[nameA] && statusSettings[nameA].status === 'delisted';
+                    const isDelistedB = statusSettings[nameB] && statusSettings[nameB].status === 'delisted';
+                    const stockA = inventory[nameA] !== undefined ? inventory[nameA] : 100;
+                    const stockB = inventory[nameB] !== undefined ? inventory[nameB] : 100;
+                    const isSoldOutA = stockA <= 0;
+                    const isSoldOutB = stockB <= 0;
+                    
+                    // 只有未下架且未售罄的促銷特價才是「有效特價」
+                    const isSaleActiveA = (promoA && promoA < origA && !isDelistedA && !isSoldOutA) ? 1 : 0;
+                    const isSaleActiveB = (promoB && promoB < origB && !isDelistedB && !isSoldOutB) ? 1 : 0;
+                    
+                    if (isSaleActiveA !== isSaleActiveB) {
+                        return isSaleActiveB - isSaleActiveA; // 特價商品排前面
+                    }
+                    
+                    // 如果兩者特價狀態相同，則再判斷是否可售 (未下架且未售罄的排在前面)
+                    const isAvailableA = (!isDelistedA && !isSoldOutA) ? 1 : 0;
+                    const isAvailableB = (!isDelistedB && !isSoldOutB) ? 1 : 0;
+                    if (isAvailableA !== isAvailableB) {
+                        return isAvailableB - isAvailableA;
+                    }
+                    
+                    // 最後保持原有順序
+                    return parseInt(a.dataset.originalIndex, 10) - parseInt(b.dataset.originalIndex, 10);
+                });
+                
+                // 重新放入 DOM
+                items.forEach(item => grid.appendChild(item));
+            });
+        }
+        
+        // Execute on load
+        updateCartBadge();
+        updateProductStatus();
+
+        const searchInput = document.getElementById('searchInput');
+        if(searchInput) {
+            searchInput.addEventListener('input', function() {
+                const keyword = this.value.trim().toLowerCase();
+                const menuItems = document.querySelectorAll('.menu-item');
+                const noResultMsg = document.getElementById('no-result-msg');
+                let hasResult = false;
+                
+                if (keyword.length > 0) {
+                    const firstMenuSection = document.querySelector('.menu-section');
+                    const offsetPosition = firstMenuSection.getBoundingClientRect().top + window.pageYOffset - 80;
+                    if(Math.abs(window.pageYOffset - offsetPosition) > 200) { window.scrollTo({ top: offsetPosition, behavior: "smooth" }); }
+                }
+
+                menuItems.forEach(item => {
+                    if (item.querySelector('.menu-item-name').innerText.toLowerCase().includes(keyword)) {
+                        item.style.display = 'flex'; hasResult = true;
+                    } else { item.style.display = 'none'; }
+                });
+
+                noResultMsg.style.display = (keyword.length > 0 && !hasResult) ? 'block' : 'none';
+            });
+        }
+
+        const navbarToggle = document.getElementById('navbarToggle');
+        const navbarMenu = document.getElementById('navbarMenu');
+        navbarToggle.addEventListener('click', () => { navbarMenu.classList.toggle('active'); });
+
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, observerOptions);
+        document.querySelectorAll('.menu-item').forEach((card, index) => setTimeout(() => observer.observe(card), index * 50));
+        
+        document.documentElement.style.scrollBehavior = 'smooth';
+    </script>
 </body>
 </html>

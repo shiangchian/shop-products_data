@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的購物車 - 漢堡王 Burger King</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Outfit:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root { --primary-gradient: linear-gradient(90deg, #FF8A00 0%, #D62300 100%); --glass-bg: rgba(255, 255, 255, 0.9); }
+        body { background: #F5EBDC; color: #502314; font-family: 'Outfit', 'Noto Sans TC', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar { background: #502314 !important; border-bottom: 4px solid #FF8A00; position: sticky; top: 0; z-index: 1000; }
+        .brand-logo { font-family: 'Lilita One', 'Noto Sans TC', sans-serif; font-weight: 900; color: #F5EBDC !important; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .brand-logo img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FF8A00; }
+        
+        .cart-item { background: white;
+        }
+        .cart-item .badge { background-color: #FF8A00 !important; border: 1px solid #502314 !important; font-weight: bold; color: #502314 !important; } border: 3px solid #502314; border-radius: 20px; padding: 20px; margin-bottom: 20px; transition: 0.3s; display: flex; align-items: center; box-shadow: 4px 4px 0px #502314; }
+        .cart-img { width: 100px; height: 100px; object-fit: cover; border-radius: 15px; margin-right: 15px; border: 2px solid #502314; }
+        
+        /* 數量調整器樣式 */
+        .qty-selector {
+            display: inline-flex;
+            align-items: center;
+            border: 2px solid #502314;
+            border-radius: 30px;
+            background: #F5EBDC;
+            padding: 2px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #FF8A00;
+            color: #502314;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 1px 1px 0px #502314;
+            transition: all 0.2s ease;
+            border: 1.5px solid #502314;
+        }
+        .qty-btn:hover:not(:disabled) {
+            background: #D62300;
+            color: white;
+            transform: scale(1.05);
+        }
+        .qty-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+        .qty-btn:disabled {
+            background: #e9ecef;
+            color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            border-color: #ccc;
+        }
+        .qty-display {
+            width: 40px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #502314;
+            outline: none;
+        }
+        
+        .summary-card { background: white; border: 3px solid #502314; border-radius: 20px; padding: 30px; position: sticky; top: 100px; box-shadow: 6px 6px 0px #502314; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; color: #502314; font-size: 1.1rem; font-weight: bold; }
+        .total-row { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 2px solid #502314; font-size: 1.5rem; font-weight: 900; color: #D62300; }
+        
+        .btn-checkout { background: #FF8A00; border: 3px solid #502314; color: #502314; font-weight: 900; padding: 15px; border-radius: 50px; width: 100%; margin-top: 20px; transition: 0.3s; box-shadow: 3px 3px 0px #502314; font-size: 1.1rem; }
+        .btn-checkout:hover { transform: translateY(-2px); color: white; background: #D62300; box-shadow: 4px 4px 0px #502314; }
+        .trash-btn { color: #D62300; background: transparent; border: none; font-size: 1.3rem; margin-left: 15px; transition: 0.3s; cursor: pointer; }
+        .trash-btn:hover { color: #502314; transform: scale(1.2); }
+        .empty-cart { display: none; text-align: center; padding: 80px 20px; }
+        .toast-custom { background: white; color: #502314; border-left: 4px solid #FF8A00; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .main-content { flex: 1; }
+
+        .footer { background: #502314; padding: 4rem 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2.5rem; border-top: 5px solid #FF8A00; color: #F5EBDC; }
+        .footer-section { display: flex; flex-direction: column; gap: 1.2rem; min-width: 0; }
+        .footer-section h3 { color: #FF8A00; font-size: 1.4rem; font-weight: 900; position: relative; padding-bottom: 0.8rem; margin-bottom: 0.5rem; font-family: 'Lilita One', sans-serif; letter-spacing: 1px; }
+        .footer-section h3::after { content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 3px; background: #D62300; border-radius: 2px; }
+        .footer-section p, .footer-section ul li { color: #F5EBDC; font-size: 0.95rem; line-height: 1.6; margin: 0; }
+        .footer-section ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.8rem; }
+        .footer-section ul li { display: flex; align-items: center; transition: transform 0.3s ease; white-space: nowrap; }
+        .footer-section ul li a { text-decoration: none; color: inherit; width: 100%; display: inline-block; font-weight: 600; }
+        .footer-section ul li:hover { transform: translateX(5px); color: #FF8A00; }
+        .social-links { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem; }
+        .social-links a { text-decoration: none; color: #502314; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; transition: all 0.3s ease; background: #FF8A00; display: inline-flex; align-items: center; white-space: nowrap; font-weight: bold; border: 2px solid #502314; }
+        .social-links a:hover { background: #D62300; color: white; transform: translateY(-2px); }
+        .social-logo { width: 20px; height: 20px; margin-right: 8px; }
+        
+        @media (max-width: 768px) {
+            .cart-item { flex-direction: column; text-align: center; }
+            .cart-img { margin-right: 0; margin-bottom: 15px; width: 120px; height: 120px; }
+            .text-end { text-align: center !important; margin-right: 0 !important; margin-top: 15px; }
+            .trash-btn { margin-left: 0; margin-top: 15px; }
+        }
+        
+        /* SALE 徽章與特價樣式 */
+        @keyframes pulse-sale {
+            0% { transform: scale(1); box-shadow: 0 4px 6px rgba(255, 65, 108, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 4px 12px rgba(255, 65, 108, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 4px 6px rgba(255, 65, 108, 0.3); }
+        }
+        .animate-pulse-sale {
+            animation: pulse-sale 2s infinite;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b) !important;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white !important;
+        }
+
+        /* Continue Shopping Button */
+        .btn-continue-shopping {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 3px solid #502314;
+            color: #502314;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 50px;
+            width: 100%;
+            margin-top: 12px;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 1.05rem;
+            box-shadow: 3px 3px 0px #502314;
+        }
+        .btn-continue-shopping:hover {
+            background: #F5EBDC;
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px #502314;
+            color: #502314;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light py-3">
+        <div class="container">
+            <a class="navbar-brand brand-logo fs-4" href="index.html">
+                <img src="image/logo.png" alt="Logo"> 漢堡王 Burger King
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto ms-4">
+                    <li class="nav-item"><a class="nav-link text-white fw-bold" href="index.html"><i class="fa-solid fa-arrow-left"></i> 繼續選購</a></li>
+                    <li class="nav-item ms-3"><a class="nav-link fw-bold" href="database_demo.html" style="color: #FF8A00 !important;"><i class="fa-solid fa-database"></i> 後台資料庫</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="profile.html" id="user-display" class="badge bg-info text-dark px-3 py-2 text-decoration-none" style="display:none; font-size: 0.95rem;"></a>
+                    <a id="btn-login" class="btn btn-outline-dark rounded-pill px-4" href="login.html">登入</a>
+                    <button id="btn-logout" class="btn btn-outline-danger rounded-pill px-4" style="display:none;">登出</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content container py-5">
+        <h2 class="mb-4 fw-bold" style="color: #502314;">
+            <i class="fa-solid fa-cart-shopping me-2" style="color: #FF8A00;"></i>我的購物車
+            <span id="unpaid-badge" class="badge bg-warning text-dark ms-2" style="font-size: 1.05rem; border-radius: 10px; display: none;">0項未結</span>
+        </h2>
+        
+        <div class="row" id="cart-content">
+            <div class="col-lg-8" id="cart-items-container"></div>
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="summary-card">
+                    <h4 class="mb-4 fw-bold border-bottom pb-3" style="color: #502314; border-color: #502314 !important;">訂單摘要</h4>
+                    <div class="summary-row"><span>總數量</span><span id="total-cups" class="fw-bold">0 份</span></div>
+                    <div class="summary-row"><span>商品小計</span><span>$<span id="subtotal">0</span></span></div>
+                    <div class="summary-row text-danger" id="discount-row" style="display: none;"><span>特價折抵</span><span>-$<span id="discount-amount">0</span></span></div>
+                    <div class="summary-row"><span>外送費</span><span class="text-success fw-bold">免運費</span></div>
+                    <div class="total-row"><span>總金額</span><span>$<span id="final-total">0</span></span></div>
+                    <button class="btn-checkout" onclick="checkout()">前往結帳 <i class="fa-solid fa-arrow-right ms-2"></i></button>
+                    <a href="index.html" class="btn-continue-shopping"><i class="fa-solid fa-cart-plus me-2"></i>繼續購物</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty-cart" id="empty-state">
+            <i class="fa-solid fa-basket-shopping fa-5x text-secondary mb-4 opacity-50"></i>
+            <h3 class="fw-bold" style="color: #502314;">您的購物車是空的</h3>
+            <p class="text-muted mb-4">看起來您還沒有加入任何商品。</p>
+            <a href="index.html" class="btn btn-outline-danger rounded-pill px-5 py-2 fs-5" style="border: 2px solid #502314; color: #502314; background: #FF8A00; font-weight: bold; box-shadow: 3px 3px 0 #502314;">去逛逛</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-section">
+            <h3>品牌區塊</h3>
+            <p>漢堡王 Burger King - 火烤美味，分享快樂</p>
+            <div class="social-links">
+                <a href="https://instagram.com" target="_blank"><img src="image/Instagram-logo.png" alt="Instagram Logo" class="social-logo"> Instagram</a>
+                <a href="https://line.me" target="_blank"><img src="image/line-logo.png" alt="LINE Logo" class="social-logo"> LINE</a>
+            </div>
+        </div>
+        <div class="footer-section">
+            <h3>BUSINESS 商業區塊</h3>
+            <ul>
+                <li><a href="index.html#drinks">🍔 火烤漢堡</a></li>
+                <li><a href="index.html#donuts">🍟 美味配餐</a></li>
+                <li><a href="index.html#fruits">🥤 沁涼飲料</a></li>
+                <li><a href="leaderboard.html">⭐ 熱銷排行</a></li>
+                <li><a href="database_demo.html" style="color:#1a73e8; font-weight:bold;">📦 後台資料庫</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>CONTACT 聯繫區塊</h3>
+            <p>📧 電子郵件：a113280055@gm.usc.edu.tw</p>
+            <p>📞 電話：0952702813</p>
+            <p>🏪 地址：台北市大安區忠孝東路四段123號</p>
+        </div>
+        <div class="footer-section">
+            <h3>版權資訊</h3>
+            <p>© 2026 漢堡王 Burger King. All rights reserved.</p>
+            <p>設計製作者：薛翔謙</p>
+        </div>
+    </footer>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="liveToast" class="toast toast-custom align-items-center"><div class="d-flex"><div class="toast-body fs-6 fw-bold"></div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button></div></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        
+        const firebaseConfig = { apiKey: "AIzaSyC-LcCfcPYCYAQZ7n45YCe6tCY_jb-ygvI", authDomain: "sonicboom-shop.firebaseapp.com", projectId: "sonicboom-shop", storageBucket: "sonicboom-shop.firebasestorage.app", messagingSenderId: "976804831944", appId: "1:976804831944:web:6ede6a95196478bd49bbfd", measurementId: "G-3FEKWL0QXZ" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        onAuthStateChanged(auth, (user) => {
+            const userDisplay = document.getElementById('user-display');
+            const btnLogin = document.getElementById('btn-login');
+            const btnLogout = document.getElementById('btn-logout');
+            if (user) {
+                userDisplay.style.display = 'inline-block';
+                userDisplay.innerHTML = `<i class="fa-solid fa-user-check me-1"></i> 會員 <span id="current-user-name">${user.displayName || user.email.split('@')[0]}</span>`;
+                btnLogin.style.display = 'none';
+                btnLogout.style.display = 'inline-block';
+            } else {
+                userDisplay.style.display = 'none';
+                btnLogin.style.display = 'inline-block';
+                btnLogout.style.display = 'none';
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', () => { 
+            if(confirm("確定要登出嗎？")) { localStorage.removeItem('dejeng_cart'); signOut(auth).then(() => { window.location.href = "index.html"; }); } 
+        });
+    </script>
+
+    <script>
+        const productsDB = {
+            "tea01": { name: "經典華堡", price: 139, img: "image/burger_whopper.png" },
+            "tea02": { name: "雙層華堡", price: 179, img: "image/burger_double.png" },
+            "tea03": { name: "重磅培根雙層牛肉堡", price: 189, img: "image/burger_double.png" },
+            "tea04": { name: "起司華堡", price: 154, img: "image/burger_whopper.png" },
+            "tea05": { name: "小華堡", price: 99, img: "image/burger_whopper.png" },
+            "tea06": { name: "經典脆雞堡", price: 89, img: "image/burger_chicken.png" },
+            "tea07": { name: "雙層起司牛肉堡", price: 109, img: "image/burger_double.png" },
+            "tea08": { name: "華鱈魚堡", price: 99, img: "image/burger_fish.png" },
+            "tea09": { name: "美式花生雙層牛肉堡", price: 149, img: "image/burger_double.png" },
+            "tea10": { name: "勁濃培根烤雞腿堡", price: 139, img: "image/burger_chicken.png" },
+            "tea11": { name: "辣味華堡", price: 139, img: "image/burger_whopper.png" },
+            "tea12": { name: "起司脆雞堡", price: 99, img: "image/burger_chicken.png" },
+            "tea13": { name: "BBQ手撕豬肉堡", price: 129, img: "image/burger_whopper.png" },
+            "tea27": { name: "火烤純牛肉堡", price: 79, img: "image/burger_whopper.png" },
+            "tea28": { name: "蜂蜜芥末脆雞堡", price: 99, img: "image/burger_chicken.png" },
+            "tea31": { name: "辣味雙層脆雞堡", price: 119, img: "image/burger_chicken.png" },
+            "tea32": { name: "經典卡拉雞腿堡", price: 119, img: "image/burger_chicken.png" },
+            "tea33": { name: "花生培根牛肉堡", price: 129, img: "image/burger_whopper.png" },
+            "donut01": { name: "美味薯條", price: 49, img: "image/side_fries.png" },
+            "donut02": { name: "酥炸洋蔥圈", price: 59, img: "image/side_onion_rings.png" },
+            "donut03": { name: "黃金雞塊", price: 59, img: "image/side_nuggets.png" },
+            "donut04": { name: "美味薯球", price: 49, img: "image/side_fries.png" },
+            "donut05": { name: "香甜蘋果派", price: 45, img: "image/logo.png" },
+            "donut06": { name: "酥炸雞翅", price: 69, img: "image/burger_chicken.png" },
+            "donut07": { name: "起司濃汁薯條", price: 69, img: "image/side_fries.png" },
+            "fruit01": { name: "可口可樂", price: 40, img: "image/drink_cola.png" },
+            "fruit02": { name: "雪碧", price: 40, img: "image/drink_cola.png" },
+            "fruit03": { name: "檸檬紅茶", price: 40, img: "image/drink_cola.png" },
+            "fruit04": { name: "無糖綠茶", price: 40, img: "image/drink_cola.png" },
+            "fruit05": { name: "研磨美式咖啡", price: 50, img: "image/drink_cola.png" },
+            "fruit06": { name: "經典熱拿鐵", price: 60, img: "image/drink_cola.png" },
+            "fruit07": { name: "巧克力聖代", price: 55, img: "image/logo.png" },
+            "fruit08": { name: "草莓聖代", price: 55, img: "image/logo.png" },
+            "fruit09": { name: "100%柳橙汁", price: 50, img: "image/drink_cola.png" },
+            "fruit10": { name: "巧克力奶昔", price: 65, img: "image/drink_cola.png" },
+            "fruit11": { name: "香草奶昔", price: 65, img: "image/drink_cola.png" },
+            "fruit12": { name: "冰鎮青草茶", price: 40, img: "image/drink_cola.png" }
+        };
+
+        let cart = JSON.parse(localStorage.getItem('dejeng_cart')) || [];
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const emptyState = document.getElementById('empty-state');
+            const cartContent = document.getElementById('cart-content');
+            const statusSettings = JSON.parse(localStorage.getItem('dejeng_product_settings')) || {};
+
+            const unpaidBadge = document.getElementById('unpaid-badge');
+            if (unpaidBadge) {
+                if (cart.length > 0) {
+                    unpaidBadge.innerText = `${cart.length}項未結`;
+                    unpaidBadge.style.display = 'inline-block';
+                } else {
+                    unpaidBadge.style.display = 'none';
+                }
+            }
+
+            if (cart.length > 0) {
+                emptyState.style.display = 'none';
+                cartContent.style.display = 'flex';
+                let html = '';
+                let total = 0;
+                let totalCups = 0;
+
+                cart.forEach((item, index) => {
+                    const p = productsDB[item.id];
+                    if(!p) return; 
+                    
+                    const promoPrice = statusSettings[p.name]?.promoPrice;
+                    const currentPrice = (promoPrice && promoPrice < p.price) ? promoPrice : p.price;
+                    const isPromo = (promoPrice && promoPrice < p.price);
+                    
+                    const itemTotal = currentPrice * item.qty;
+                    total += itemTotal;
+                    totalCups += parseInt(item.qty);
+
+                    let badgeHtml = '';
+                    if (item.sugar !== '--' && item.ice !== '--') {
+                        badgeHtml = `<span class="badge text-dark me-1">${item.sugar}</span> <span class="badge text-dark">${item.ice}</span>`;
+                    } else {
+                        badgeHtml = `<span class="badge bg-success">手工現做 / 嚴選鮮切</span>`;
+                    }
+
+                    const inventory = syncInventory();
+                    const maxAvailable = inventory[p.name] !== undefined ? inventory[p.name] : 100;
+                    const isMinusDisabled = item.qty <= 1 ? 'disabled' : '';
+                    const isPlusDisabled = item.qty >= maxAvailable ? 'disabled' : '';
+
+                    let stockWarning = '';
+                    if (maxAvailable <= 0) {
+                        stockWarning = `<span class="badge bg-danger text-white ms-2" style="font-size:0.75rem;">已完售</span>`;
+                    } else if (item.qty > maxAvailable) {
+                        stockWarning = `<span class="badge bg-warning text-dark ms-2" style="font-size:0.75rem;">庫存不足 (剩 ${maxAvailable})</span>`;
+                    }
+
+                    html += `
+                    <div class="cart-item" style="${isPromo ? 'border-left: 4px solid #e74c3c;' : ''}">
+                        <img src="${p.img}" alt="${p.name}" class="cart-img">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h5 class="mb-0 fw-bold">${p.name}</h5>
+                                ${isPromo ? `<span class="badge animate-pulse-sale" style="font-size:0.75rem; padding: 3px 8px; border-radius: 12px;">SALE</span>` : ''}
+                                ${stockWarning}
+                            </div>
+                            <p class="text-muted small mb-0">${badgeHtml}</p>
+                        </div>
+                        <div class="text-end me-4">
+                            <div class="mb-2 fw-bold fs-5">
+                                ${isPromo ? `
+                                    <span style="text-decoration: line-through; color: #95a5a6; font-size: 0.85rem; margin-right: 5px;">$${p.price}</span>
+                                    <span style="color: #e74c3c; font-weight: bold;">$${promoPrice}</span>
+                                ` : `
+                                    <span class="text-primary">$${p.price}</span>
+                                `}
+                            </div>
+                            <div class="qty-selector">
+                                <button class="qty-btn" onclick="adjustQty(${index}, -1)" ${isMinusDisabled} title="減少數量">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <input type="text" class="qty-display" value="${item.qty}" readonly>
+                                <button class="qty-btn" onclick="adjustQty(${index}, 1)" ${isPlusDisabled} title="增加數量">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="trash-btn" onclick="removeItem(${index})" title="移除商品"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>`;
+                });
+                
+                container.innerHTML = html;
+                
+                // Calculate original total and final total difference (discount)
+                let originalTotal = 0;
+                cart.forEach(item => {
+                    const p = productsDB[item.id];
+                    if (p) {
+                        originalTotal += p.price * item.qty;
+                    }
+                });
+                
+                document.getElementById('subtotal').innerText = originalTotal.toLocaleString();
+                
+                const discount = originalTotal - total;
+                const discountRow = document.getElementById('discount-row');
+                if (discount > 0) {
+                    discountRow.style.display = 'flex';
+                    document.getElementById('discount-amount').innerText = discount.toLocaleString();
+                } else {
+                    discountRow.style.display = 'none';
+                }
+                
+                document.getElementById('final-total').innerText = total.toLocaleString();
+                document.getElementById('total-cups').innerText = `${totalCups} 份`;
+            } else {
+                cartContent.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+
+        window.updateQty = function(index, newQty) {
+            if(newQty < 1) newQty = 1;
+            cart[index].qty = parseInt(newQty);
+            localStorage.setItem('dejeng_cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        window.adjustQty = function(index, amount) {
+            const item = cart[index];
+            const p = productsDB[item.id];
+            if(!p) return;
+            
+            const inventory = syncInventory();
+            const maxAvailable = inventory[p.name] !== undefined ? inventory[p.name] : 100;
+            
+            let newQty = parseInt(item.qty) + amount;
+            if(newQty < 1) newQty = 1;
+            if(newQty > maxAvailable) {
+                newQty = maxAvailable;
+                alert(`抱歉，【${p.name}】目前庫存僅剩 ${maxAvailable} 份！`);
+            }
+            
+            cart[index].qty = newQty;
+            localStorage.setItem('dejeng_cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        window.removeItem = function(index) {
+            if(confirm('確定要從購物車移除此商品嗎？')) {
+                cart.splice(index, 1);
+                localStorage.setItem('dejeng_cart', JSON.stringify(cart));
+                renderCart();
+            }
+        }
+
+        window.showToast = function(message) { 
+            const toastEl = document.getElementById('liveToast'); 
+            const toastBody = toastEl.querySelector('.toast-body'); 
+            toastBody.innerHTML = `<i class="fa-solid fa-circle-check text-success me-2 fs-5"></i> ${message}`; 
+            const toast = new bootstrap.Toast(toastEl); toast.show(); 
+        }
+        
+        let currentCheckoutOriginalTotal = 0;
+        let currentCheckoutDiscount = 0;
+        let currentCheckoutTotal = 0;
+
+        // --- 結帳時，將商品清單存入訂單記錄 ---
+        window.checkout = function() { 
+            if(cart.length === 0) {
+                alert("購物車是空的喔！");
+                return;
+            }
+            
+            // Check stock of all items in cart before proceeding to checkout
+            const inventory = syncInventory();
+            for (let item of cart) {
+                const p = productsDB[item.id];
+                if (!p) continue;
+                const stock = inventory[p.name] !== undefined ? inventory[p.name] : 100;
+                if (stock <= 0) {
+                    alert(`抱歉，購物車中的【${p.name}】已無庫存，無法結帳！請將其移除再進行結帳。`);
+                    return;
+                }
+                if (item.qty > stock) {
+                    alert(`抱歉，購物車中的【${p.name}】庫存不足（僅剩 ${stock} 件），請減少數量再進行結帳。`);
+                    return;
+                }
+            }
+            
+            window.location.href = "checkout.html";
+        }
+
+        const old_unused_checkout = function() {
+            if (currentCheckoutDiscount > 0) {
+                promoHint.style.display = 'block';
+                document.getElementById('payment-modal-discount').innerText = currentCheckoutDiscount.toLocaleString();
+                
+                // Apple Pay sheet rows
+                document.getElementById('ios-row-subtotal').style.display = 'flex';
+                document.getElementById('ios-row-discount').style.display = 'flex';
+                document.getElementById('payment-apple-pay-subtotal').innerText = originalTotal.toLocaleString();
+                document.getElementById('payment-apple-pay-discount').innerText = currentCheckoutDiscount.toLocaleString();
+            } else {
+                promoHint.style.display = 'none';
+                document.getElementById('ios-row-subtotal').style.display = 'none';
+                document.getElementById('ios-row-discount').style.display = 'none';
+            }
+
+            // 4. 顯示彈窗
+            showPaymentModal();
+        }
+
+        window.showPaymentModal = function() {
+            const overlay = document.getElementById('payment-modal');
+            overlay.style.display = 'flex';
+            // Force reflow
+            overlay.offsetHeight;
+            overlay.classList.add('active');
+            
+            // Show initial screen, hide others
+            showScreen('payment-screen-select');
+            
+            // Reset inputs
+            document.getElementById('credit-card-form').reset();
+            updateCardNumber({ value: '' });
+            updateCardExpiry({ value: '' });
+            updateCardHolder({ value: '' });
+            
+            // Reset FaceID/Apple Pay
+            document.getElementById('faceid-spinner').style.display = 'none';
+            document.getElementById('faceid-checkmark').style.display = 'none';
+            document.getElementById('ios-auth-hint').innerText = "使用 Face ID 付款 (點選圖示模擬驗證)";
+        }
+
+        window.closePaymentModal = function() {
+            const overlay = document.getElementById('payment-modal');
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 300);
+        }
+
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('.payment-screen');
+            screens.forEach(s => s.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        window.selectPaymentMethod = function(method) {
+            if (method === 'apple-pay') {
+                showScreen('payment-screen-apple-pay');
+            } else if (method === 'credit-card') {
+                showScreen('payment-screen-card');
+            }
+        }
+
+        window.backToSelect = function() {
+            showScreen('payment-screen-select');
+        }
+
+        // Credit Card Input Real-time Preview & Formatting
+        window.updateCardNumber = function(input) {
+            // Remove non-digits and format as 4-digit chunks
+            let val = input.value.replace(/\D/g, '');
+            let formatted = val.match(/.{1,4}/g)?.join(' ') || '';
+            input.value = formatted;
+            
+            const preview = document.getElementById('preview-card-number');
+            preview.innerText = formatted || '•••• •••• •••• ••••';
+            
+            // Detect card brand
+            const logo = document.getElementById('preview-card-logo');
+            if (val.startsWith('4')) {
+                logo.innerText = 'VISA';
+            } else if (val.startsWith('5')) {
+                logo.innerText = 'Mastercard';
+            } else if (val.startsWith('3')) {
+                logo.innerText = 'AMEX';
+            } else {
+                logo.innerText = 'VISA';
+            }
+        }
+
+        window.updateCardExpiry = function(input) {
+            // Remove non-digits and insert slash
+            let val = input.value.replace(/\D/g, '');
+            if (val.length >= 2) {
+                val = val.substring(0, 2) + '/' + val.substring(2);
+            }
+            input.value = val;
+            
+            const preview = document.getElementById('preview-card-expiry');
+            preview.innerText = val || 'MM/YY';
+        }
+
+        window.updateCardHolder = function(input) {
+            const preview = document.getElementById('preview-card-holder');
+            preview.innerText = input.value.toUpperCase() || 'YOUR NAME';
+        }
+
+        window.processCardPayment = function(event) {
+            event.preventDefault();
+            
+            // Show processing screen
+            showScreen('payment-screen-processing');
+            
+            setTimeout(() => {
+                showScreen('payment-screen-success');
+                setTimeout(() => {
+                    finalizePayment('Credit Card');
+                }, 1500);
+            }, 2000);
+        }
+
+        // Apple Pay Face ID simulated authorization
+        window.triggerApplePayAuth = function() {
+            const spinner = document.getElementById('faceid-spinner');
+            const checkmark = document.getElementById('faceid-checkmark');
+            const hint = document.getElementById('ios-auth-hint');
+            
+            hint.innerText = "驗證中...";
+            spinner.style.display = 'block';
+            
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                checkmark.style.display = 'flex';
+                hint.innerText = "付款成功！";
+                
+                // Play simulated click/chime success effect
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.15);
+                    
+                    setTimeout(() => {
+                        const osc2 = ctx.createOscillator();
+                        const gain2 = ctx.createGain();
+                        osc2.connect(gain2);
+                        gain2.connect(ctx.destination);
+                        osc2.type = 'sine';
+                        osc2.frequency.setValueAtTime(1000, ctx.currentTime);
+                        gain2.gain.setValueAtTime(0.1, ctx.currentTime);
+                        osc2.start();
+                        osc2.stop(ctx.currentTime + 0.25);
+                    }, 150);
+                } catch (e) {
+                    console.log("Audio simulation failed:", e);
+                }
+                
+                setTimeout(() => {
+                    finalizePayment('Apple Pay');
+                }, 1500);
+            }, 1800);
+        }
+
+        function finalizePayment(method) {
+            let purchasedItems = [];
+            const statusSettings = JSON.parse(localStorage.getItem('dejeng_product_settings')) || {};
+
+            // Pack items
+            cart.forEach(item => {
+                const p = productsDB[item.id];
+                if(p) {
+                    let spec = (item.sugar !== '--' && item.ice !== '--') ? ` (${item.sugar}/${item.ice})` : '';
+                    purchasedItems.push(`${p.name}${spec} x${item.qty}`);
+                }
+            });
+
+            // Get customer name
+            let customerName = "訪客 (前台購買)";
+            const nameSpan = document.getElementById('current-user-name');
+            if (nameSpan) { customerName = nameSpan.innerText; }
+
+            // Write order
+            const newOrder = {
+                total: currentCheckoutTotal,
+                originalTotal: currentCheckoutOriginalTotal,
+                discount: currentCheckoutDiscount,
+                items: purchasedItems,
+                itemsCount: cart.length,
+                customer: customerName,
+                paymentMethod: method, // Record payment method
+                timestamp: new Date().getTime()
+            };
+            
+            let orders = JSON.parse(localStorage.getItem('dejeng_orders')) || [];
+            orders.push(newOrder);
+            localStorage.setItem('dejeng_orders', JSON.stringify(orders));
+
+            // Clear Cart
+            localStorage.removeItem('dejeng_cart'); 
+            cart = [];
+            
+            closePaymentModal();
+            window.location.href = "success.html?type=checkout&name=" + encodeURIComponent(customerName);
+        }
+
+        function syncInventory() {
+            let baseInventory = JSON.parse(localStorage.getItem('dejeng_base_inventory')) || {};
+            let baseInvUpdated = false;
+            
+            const allProducts = [
+                "水之森玄米抹茶", "英倫伯爵紅茶", "珍珠鮮奶", "手炒黑糖鮮奶", "嫩仙草凍奶", 
+                "海鹽芒果綠", "琥珀高峰烏龍", "茉香綠茶拿鐵", "芋頭鮮奶", "果漾微甜氣泡飲", 
+                "經典冰水果茶", "季節限定特調", "招牌綜合果茶", "焙烏龍鮮奶", "柚見冰茶", 
+                "蜜桃春烏龍", "芝士奶蓋紅茶", "桂花烏龍凍飲", "蜜糖波堤", "雙層巧克力波堤", 
+                "草莓波堤", "經典糖霜甜甜圈", "巧克力脆片波堤", "草莓夾心甜甜圈", "抹茶巧貝", 
+                "鮮甜愛文芒果", "清香麻豆文旦", "活力陽光香蕉", "嚴選進口紅櫻桃", "清脆鮮切小黃瓜", 
+                "紐西蘭奇異果", "鮮甜多汁水蜜桃", "屏東金鑽鳳梨", "屏東黑珍珠蓮霧", "沁涼紅肉西瓜盤", 
+                "屏東無籽綠檸檬", "清脆甜水梨"
+            ];
+            
+            allProducts.forEach(name => {
+                if (baseInventory[name] === undefined) {
+                    baseInventory[name] = Math.floor(Math.random() * 101) + 20; // 隨機庫存 20-120
+                    baseInvUpdated = true;
+                }
+            });
+            
+            if (baseInvUpdated) {
+                localStorage.setItem('dejeng_base_inventory', JSON.stringify(baseInventory));
+            }
+            
+            const orders = JSON.parse(localStorage.getItem('dejeng_orders')) || [];
+            const computedInventory = {};
+            for (let name in baseInventory) {
+                computedInventory[name] = baseInventory[name];
+            }
+            
+            orders.forEach(order => {
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(itemStr => {
+                        const match = itemStr.match(/(.*?)(?:\s*\(.*?\))?\s*x(\d+)/);
+                        if (match) {
+                            const pName = match[1].trim();
+                            const pQty = parseInt(match[2]);
+                            if (computedInventory[pName] !== undefined) {
+                                computedInventory[pName] -= pQty;
+                            } else {
+                                baseInventory[pName] = Math.floor(Math.random() * 101) + 20;
+                                baseInvUpdated = true;
+                                computedInventory[pName] = baseInventory[pName] - pQty;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            if (baseInvUpdated) {
+                localStorage.setItem('dejeng_base_inventory', JSON.stringify(baseInventory));
+            }
+            
+            localStorage.setItem('dejeng_computed_inventory', JSON.stringify(computedInventory));
+            return computedInventory;
+        }
+
+        renderCart();
+    </script>
+
+    <!-- Fake Payment Modal -->
+    <div id="payment-modal" class="payment-modal-overlay" style="display: none;">
+        <div class="payment-modal-container">
+            <!-- Close Button -->
+            <button class="payment-modal-close" onclick="closePaymentModal()">&times;</button>
+            
+            <!-- Screen 1: Select Payment Method -->
+            <div id="payment-screen-select" class="payment-screen">
+                <h3 class="payment-modal-title">請選擇付款方式</h3>
+                <p class="payment-modal-subtitle">總計金額：$<span id="payment-modal-total">0</span></p>
+                <div id="payment-modal-promo-hint" class="text-success text-center mb-3 fw-bold" style="display:none; font-size: 0.95rem;">🎉 已享特價折抵 -$<span id="payment-modal-discount">0</span></div>
+                
+                <div class="payment-options">
+                    <!-- Option 1: Apple Pay -->
+                    <button class="payment-opt-btn btn-apple-pay-direct" onclick="selectPaymentMethod('apple-pay')">
+                        <i class="fa-brands fa-apple me-2 fs-4"></i> Apple Pay
+                    </button>
+                    
+                    <!-- Option 2: Apple Pay 信用卡 -->
+                    <button class="payment-opt-btn btn-credit-card" onclick="selectPaymentMethod('credit-card')">
+                        <i class="fa-solid fa-credit-card me-2 fs-5"></i> Apple Pay 信用卡
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Screen 2A: Credit Card Form -->
+            <div id="payment-screen-card" class="payment-screen" style="display: none;">
+                <div class="back-btn-container">
+                    <button class="payment-back-btn" onclick="backToSelect()"><i class="fa-solid fa-arrow-left"></i> 返回</button>
+                </div>
+                <h3 class="payment-modal-title">輸入信用卡資訊</h3>
+                
+                <!-- Interactive Glassmorphic Card Preview -->
+                <div class="interactive-card-wrapper">
+                    <div class="glass-credit-card" id="credit-card-preview">
+                        <div class="card-chip"></div>
+                        <div class="card-logo" id="preview-card-logo">VISA</div>
+                        <div class="card-number" id="preview-card-number">•••• •••• •••• ••••</div>
+                        <div class="card-info-row">
+                            <div class="card-holder-col">
+                                <div class="card-label">CARDHOLDER</div>
+                                <div class="card-val" id="preview-card-holder">YOUR NAME</div>
+                            </div>
+                            <div class="card-expiry-col">
+                                <div class="card-label">EXPIRES</div>
+                                <div class="card-val" id="preview-card-expiry">MM/YY</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card Form -->
+                <form id="credit-card-form" onsubmit="processCardPayment(event)">
+                    <div class="form-group mb-3">
+                        <label class="form-label">卡號</label>
+                        <input type="text" id="card-number-input" class="form-control" placeholder="4242 4242 4242 4242" maxlength="19" required oninput="updateCardNumber(this)">
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">到期日</label>
+                            <input type="text" id="card-expiry-input" class="form-control" placeholder="MM/YY" maxlength="5" required oninput="updateCardExpiry(this)">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">安全碼 (CVV)</label>
+                            <input type="text" id="card-cvv-input" class="form-control" placeholder="123" maxlength="3" required>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label class="form-label">持卡人姓名</label>
+                        <input type="text" id="card-name-input" class="form-control" placeholder="輸入姓名" required oninput="updateCardHolder(this)">
+                    </div>
+                    <button type="submit" class="btn-checkout-confirm">確認付款 $<span id="payment-card-total">0</span></button>
+                </form>
+            </div>
+            
+            <!-- Screen 2B: Apple Pay iOS Simulated Sheet -->
+            <div id="payment-screen-apple-pay" class="payment-screen" style="display: none;">
+                <div class="back-btn-container">
+                    <button class="payment-back-btn" onclick="backToSelect()"><i class="fa-solid fa-arrow-left"></i> 返回</button>
+                </div>
+                
+                <!-- iOS Apple Pay Sheet Mockup -->
+                <div class="ios-apple-pay-sheet">
+                    <div class="ios-header">
+                        <div class="ios-apple-pay-logo"><i class="fa-brands fa-apple"></i> Pay</div>
+                    </div>
+                    
+                    <div class="ios-row">
+                       <div class="ios-label">卡片</div>
+                       <div class="ios-value"><i class="fa-solid fa-credit-card text-primary me-2"></i>得正聯名卡 (•••• 8888)</div>
+                    </div>
+                    
+                    <div class="ios-row">
+                       <div class="ios-label">送貨地址</div>
+                       <div class="ios-value">台灣台北市大安區忠孝東路四段123號</div>
+                    </div>
+                    
+                    <div class="ios-row" id="ios-row-subtotal" style="display: none;">
+                       <div class="ios-label">商品小計</div>
+                       <div class="ios-value">$<span id="payment-apple-pay-subtotal">0</span></div>
+                    </div>
+                    
+                    <div class="ios-row" id="ios-row-discount" style="display: none; color: #ff3b30;">
+                       <div class="ios-label" style="color: #ff3b30;">特價折抵</div>
+                       <div class="ios-value" style="color: #ff3b30;">-$<span id="payment-apple-pay-discount">0</span></div>
+                    </div>
+
+                    <div class="ios-row">
+                       <div class="ios-label">總計</div>
+                       <div class="ios-value fw-bold" style="color: #000; font-size: 1.25rem;">$<span id="payment-apple-pay-total">0</span></div>
+                    </div>
+                    
+                    <!-- Face ID/Touch ID Scanning Animation -->
+                    <div class="ios-auth-container" onclick="triggerApplePayAuth()">
+                        <div class="faceid-icon-wrapper" id="faceid-trigger">
+                            <svg class="faceid-svg" viewBox="0 0 100 100" width="80" height="80">
+                                <path class="faceid-path" d="M25,35 L25,25 L35,25 M75,35 L75,25 L65,25 M25,65 L25,75 L35,75 M75,65 L75,75 L65,75" fill="none" stroke="#007AFF" stroke-width="4" stroke-linecap="round"/>
+                                <path class="faceid-eyes" d="M40,45 A 3,3 0 1,1 40,44.9 M60,45 A 3,3 0 1,1 60,44.9" fill="none" stroke="#007AFF" stroke-width="4" stroke-linecap="round"/>
+                                <path class="faceid-nose" d="M50,45 L50,55 L45,55" fill="none" stroke="#007AFF" stroke-width="4" stroke-linecap="round"/>
+                                <path class="faceid-mouth" d="M40,65 Q50,70 60,65" fill="none" stroke="#007AFF" stroke-width="4" stroke-linecap="round"/>
+                            </svg>
+                            <div class="faceid-spinner" id="faceid-spinner" style="display: none;"></div>
+                            <div class="faceid-success-checkmark" id="faceid-checkmark" style="display: none;">
+                                <i class="fa-solid fa-circle-check text-success fs-1 animate-pop"></i>
+                            </div>
+                        </div>
+                        <p class="ios-auth-hint" id="ios-auth-hint">使用 Face ID 付款 (點選圖示模擬驗證)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Screen 3: Processing/Loading & Success Checkmark Animation -->
+            <div id="payment-screen-processing" class="payment-screen" style="display: none; padding: 40px 0;">
+                <div class="spinner-container">
+                    <div class="loading-spinner"></div>
+                </div>
+                <h4 class="mt-4 fw-bold text-center" style="color: #2F4F4F;">安全付款授權中...</h4>
+                <p class="text-muted text-center">請勿關閉視窗</p>
+            </div>
+            
+            <div id="payment-screen-success" class="payment-screen" style="display: none; padding: 40px 0;">
+                <div class="checkmark-animation">
+                    <div class="checkmark-circle">
+                        <i class="fa-solid fa-check text-white fs-1"></i>
+                    </div>
+                </div>
+                <h4 class="mt-4 fw-bold text-center" style="color: #2ED573;">付款成功！</h4>
+                <p class="text-muted text-center">您的訂單已成立，正為您導向至訂單完成頁...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

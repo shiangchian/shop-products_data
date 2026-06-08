@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品詳細 - 漢堡王 Burger King</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Outfit:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', 'Noto Sans TC', -apple-system, sans-serif; background: #F5EBDC; color: #502314; min-height: 100vh; display: flex; flex-direction: column; padding-top: 80px; }
+        
+        /* Navbar Styles */
+        .navbar { background: #502314; padding: 15px 20px; box-shadow: 0 4px 15px rgba(80, 35, 20, 0.2); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; border-bottom: 4px solid #FF8A00; }
+        .navbar-container { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        .navbar-brand-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+        .navbar-brand-link:hover {
+            transform: scale(1.02);
+        }
+        .navbar-brand-logo-img {
+            height: 42px;
+            width: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #FF8A00;
+        }
+        .navbar-brand-text {
+            font-family: 'Lilita One', 'Noto Sans TC', sans-serif;
+            font-weight: 900;
+            color: #F5EBDC;
+            font-size: 1.4rem;
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+        .navbar-left-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #502314 !important;
+            background: linear-gradient(135deg, #FF8A00 0%, #D62300 100%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(214, 35, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .navbar-logo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(214, 35, 0, 0.5);
+        }
+        #logo-cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #D62300;
+            color: white !important;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            line-height: 15px;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border: 1.5px solid #F5EBDC;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding: 0 2px;
+            box-sizing: border-box;
+        }
+        .navbar-menu { display: flex; list-style: none; gap: 20px; align-items: center; margin: 0; padding: 0; }
+        .navbar-menu li { position: relative; }
+        .navbar-menu a { text-decoration: none; color: #F5EBDC; font-weight: 700; transition: color 0.3s ease; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; }
+        .navbar-menu a:hover { color: #FF8A00; }
+        .navbar-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #F5EBDC; }
+
+        .mobile-member-display {
+            display: none;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #502314;
+            background-color: #FF8A00;
+            padding: 8px 16px;
+            border-radius: 20px;
+            white-space: nowrap;
+            align-items: center;
+            gap: 5px;
+            border: 2px solid #502314;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            height: 38px;
+        }
+        .mobile-member-display:hover {
+            background-color: #D62300;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .product-page-wrapper { flex: 1; padding: 4rem 2rem; display: flex; justify-content: center; align-items: center; }
+        .product-detail-container { 
+            background: white; max-width: 1000px; width: 100%; border-radius: 25px; 
+            border: 4px solid #502314; box-shadow: 8px 8px 0px #502314; display: flex; overflow: hidden; position: relative;
+        }
+        .breadcrumb { position: absolute; top: 20px; left: 30px; font-size: 0.9rem; color: #502314; font-weight: bold; }
+        .breadcrumb a { color: #D62300; text-decoration: none; }
+        
+        .image-section { flex: 1; background: #F5EBDC; padding: 4rem; display: flex; justify-content: center; align-items: center; border-right: 4px solid #502314; }
+        .image-section img { width: 100%; max-width: 350px; border-radius: 20px; border: 3px solid #502314; box-shadow: 6px 6px 0px #502314; transition: transform 0.3s ease; }
+        .image-section img:hover { transform: scale(1.03); }
+
+        .info-section { flex: 1; padding: 4rem 3rem; display: flex; flex-direction: column; justify-content: center; background: white; }
+        .badge { display: inline-block; background: #D62300; color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 900; margin-bottom: 15px; letter-spacing: 1px; width: fit-content; border: 2px solid #502314; }
+        .pd-title { font-family: 'Lilita One', 'Noto Sans TC', sans-serif; font-size: 2.5rem; color: #502314; font-weight: 900; margin-bottom: 15px; }
+        .pd-desc { font-size: 1rem; color: #502314; line-height: 1.8; margin-bottom: 25px; font-weight: 500; }
+        .pd-price { font-size: 2.2rem; font-weight: 900; color: #D62300; margin-bottom: 25px; }
+        
+        .option-group { margin-bottom: 20px; }
+        .option-title { font-weight: 900; color: #502314; margin-bottom: 10px; font-size: 1.1rem; }
+        .pill-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .pill { padding: 8px 18px; border: 2px solid #502314; border-radius: 30px; color: #502314; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; background-color: #F5EBDC; }
+        .pill:hover { border-color: #D62300; color: #D62300; }
+        .pill.active { background: #FF8A00; color: #502314; border-color: #502314; box-shadow: 2px 2px 0px #502314; }
+
+        .qty-container { display: flex; align-items: center; gap: 15px; }
+        .qty-btn { background: #FF8A00; color: #502314; border: 2px solid #502314; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; box-shadow: 2px 2px 0px #502314; }
+        .qty-btn:hover { background: #D62300; color: white; transform: scale(1.1); }
+        .qty-input { width: 60px; height: 40px; text-align: center; border: 2px solid #502314; border-radius: 10px; font-size: 1.2rem; font-weight: bold; color: #502314; outline: none; background: #F5EBDC; }
+
+        .btn-add-cart { background: #FF8A00; color: #502314; border: 3px solid #502314; padding: 18px; border-radius: 50px; font-size: 1.2rem; font-weight: 900; cursor: pointer; transition: all 0.3s ease; margin-top: 20px; box-shadow: 4px 4px 0px #502314; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-add-cart:hover { background-color: #D62300; color: white; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #502314; }
+
+        .pd-stock {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 30px;
+            width: fit-content;
+            border: 2px solid #502314;
+        }
+
+        @media (max-width: 900px) {
+            .product-detail-container { flex-direction: column; }
+            .image-section { padding: 3rem 2rem; border-right: none; border-bottom: 4px solid #502314; } .image-section img { max-width: 250px; }
+            .info-section { padding: 3rem 2rem; } .pd-title { font-size: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-menu { display: none; flex-direction: column; background: #502314; position: absolute; top: 100%; left: 0; right: 0; width: 100%; padding: 10px 0; border-top: 2px solid #FF8A00; }
+            .navbar-menu.active { display: flex; } .navbar-toggle { display: block; }
+            .navbar.logged-in .mobile-member-display {
+                display: flex !important;
+            }
+        }
+
+        /* Footer Styles */
+        .footer { background: #502314; padding: 4rem 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2.5rem; border-top: 5px solid #FF8A00; color: #F5EBDC; }
+        .footer-section { display: flex; flex-direction: column; gap: 1.2rem; min-width: 0; }
+        .footer-section h3 { color: #FF8A00; font-size: 1.4rem; font-weight: 900; position: relative; padding-bottom: 0.8rem; margin-bottom: 0.5rem; font-family: 'Lilita One', sans-serif; letter-spacing: 1px; }
+        .footer-section h3::after { content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 3px; background: #D62300; border-radius: 2px; }
+        .footer-section p, .footer-section ul li { color: #F5EBDC; font-size: 0.95rem; line-height: 1.6; margin: 0; }
+        .footer-section ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.8rem; }
+        .footer-section ul li { display: flex; align-items: center; transition: transform 0.3s ease; white-space: nowrap; }
+        .footer-section ul li a { text-decoration: none; color: inherit; width: 100%; display: inline-block; font-weight: 600; }
+        .footer-section ul li:hover { transform: translateX(5px); color: #FF8A00; }
+        .social-links { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem; }
+        .social-links a { text-decoration: none; color: #502314; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; transition: all 0.3s ease; background: #FF8A00; display: inline-flex; align-items: center; white-space: nowrap; font-weight: bold; border: 2px solid #502314; }
+        .social-links a:hover { background: #D62300; color: white; transform: translateY(-2px); }
+        .social-logo { width: 20px; height: 20px; margin-right: 8px; }
+        @media (max-width: 480px) {
+            .navbar-brand-text { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-left-container">
+                <a href="index.html" class="navbar-brand-link">
+                    <img src="image/logo.png" alt="漢堡王 Burger King" class="navbar-brand-logo-img">
+                    <span class="navbar-brand-text">漢堡王 Burger King</span>
+                </a>
+                <a href="cart.html" class="navbar-logo">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="logo-cart-badge" style="display: none;">0</span>
+                </a>
+            </div>
+            <a href="profile.html" id="mobile-member-display" class="mobile-member-display"></a>
+            <button class="navbar-toggle" id="navbarToggle">☰</button>
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> 首頁</a></li>
+                <li><a href="index.html#drinks"><i class="fa-solid fa-burger"></i> 火烤漢堡</a></li>
+                <li><a href="index.html#donuts"><i class="fa-solid fa-cheese"></i> 美味配餐</a></li>
+                <li><a href="index.html#fruits"><i class="fa-solid fa-whiskey-glass"></i> 沁涼飲料</a></li>
+                <li><a href="leaderboard.html"><i class="fa-solid fa-crown"></i> 排行榜</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> 購物車 <span id="cart-badge" style="background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; vertical-align: top; display: none;">0</span></a></li>
+                
+                <li><a href="database_demo.html" style="color: #e74c3c; font-weight: bold;"><i class="fa-solid fa-database"></i> 資料庫</a></li>
+
+                <li id="nav-login"><a href="login.html"><i class="fa-solid fa-user"></i> 登入/註冊</a></li>
+                <li id="nav-user" style="display:none;"><a href="profile.html" id="user-display" style="color:#1a73e8; font-weight:bold;"></a></li>
+                <li id="nav-logout" style="display:none;"><a href="#" id="btn-logout" style="color:#e74c3c;">登出</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="product-page-wrapper">
+        <div class="product-detail-container">
+            <div class="breadcrumb"><a href="index.html">首頁</a> > <span style="color:#4682B4;">商品詳細</span></div>
+            
+            <div class="image-section">
+                <img id="pd-image" src="" alt="商品圖片">
+            </div>
+            
+            <div class="info-section">
+                <div id="pd-badge" class="badge">推薦商品</div>
+                <h1 class="pd-title" id="pd-name">載入中...</h1>
+                <p class="pd-desc" id="pd-desc">商品描述載入中，請稍候...</p>
+                <div class="pd-price" id="pd-price">NT$ 0</div>
+                <div id="pd-stock" class="pd-stock" style="margin-bottom: 20px;"></div>
+
+                <div class="option-group" id="sugar-group">
+                    <div class="option-title"><i class="fa-solid fa-spoon"></i> 甜度選擇</div>
+                    <div class="pill-container" id="sugar-options">
+                        <div class="pill active" onclick="selectPill(this, 'sugar-options')">正常糖</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">少糖</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">半糖</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">微糖</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">無糖</div>
+                    </div>
+                </div>
+
+                <div class="option-group" id="ice-group">
+                    <div class="option-title"><i class="fa-solid fa-snowflake"></i> 冰塊選擇</div>
+                    <div class="pill-container" id="ice-options">
+                        <div class="pill active" onclick="selectPill(this, 'ice-options')">正常冰</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">少冰</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">微冰</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">去冰</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">完全去冰</div>
+                    </div>
+                </div>
+
+                <div class="option-group">
+                    <div class="option-title"><i class="fa-solid fa-plus-minus"></i> 購買數量</div>
+                    <div class="qty-container">
+                        <button class="qty-btn" onclick="changeQty(-1)"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" id="pd-qty" class="qty-input" value="1" min="1" readonly>
+                        <button class="qty-btn" onclick="changeQty(1)"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <button class="btn-add-cart" id="add-to-cart-btn">
+                    <i class="fa-solid fa-cart-plus"></i> 加入購物車
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-section">
+            <h3>品牌區塊</h3>
+            <p>漢堡王 Burger King - 飲品 x 甜點 x 鮮果</p>
+            <div class="social-links">
+                <a href="https://instagram.com" target="_blank"><img src="image/Instagram-logo.png" alt="Instagram Logo" class="social-logo"> Instagram</a>
+                <a href="https://line.me" target="_blank"><img src="image/line-logo.png" alt="LINE Logo" class="social-logo"> LINE</a>
+            </div>
+        </div>
+        <div class="footer-section">
+            <h3>BUSINESS 商業區塊</h3>
+            <ul>
+                <li><a href="index.html#drinks">🍔 火烤漢堡</a></li>
+                <li><a href="index.html#donuts">🍟 美味配餐</a></li>
+                <li><a href="index.html#fruits">🥤 沁涼飲料</a></li>
+                <li><a href="leaderboard.html">⭐ 熱銷排行</a></li>
+                <li><a href="database_demo.html" style="color:#1a73e8; font-weight:bold;">📦 資料庫展示頁</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>CONTACT 聯繫區塊</h3>
+            <p>📧 電子郵件：a113280055@gm.usc.edu.tw</p>
+            <p>📞 電話：0952702813</p>
+            <p>🏪 地址：台北市大安區忠孝東路四段123號</p>
+        </div>
+        <div class="footer-section">
+            <h3>版權資訊</h3>
+            <p>© 2026 漢堡王 Burger King. All rights reserved.</p>
+            <p>設計製作者：薛翔謙</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyC-LcCfcPYCYAQZ7n45YCe6tCY_jb-ygvI", authDomain: "sonicboom-shop.firebaseapp.com", projectId: "sonicboom-shop", storageBucket: "sonicboom-shop.firebasestorage.app", messagingSenderId: "976804831944", appId: "1:976804831944:web:6ede6a95196478bd49bbfd", measurementId: "G-3FEKWL0QXZ" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            const navLogin = document.getElementById('nav-login');
+            const navUser = document.getElementById('nav-user');
+            const navLogout = document.getElementById('nav-logout');
+            const userDisplay = document.getElementById('user-display');
+            const navbar = document.querySelector('.navbar');
+            const mobileMemberDisplay = document.getElementById('mobile-member-display');
+
+            if (user) {
+                navLogin.style.display = 'none';
+                navUser.style.display = 'block';
+                navLogout.style.display = 'block';
+                const memberName = user.displayName || user.email.split('@')[0];
+                userDisplay.innerHTML = `<i class="fa-solid fa-user-check"></i> 會員 ${memberName}`;
+                if (mobileMemberDisplay) {
+                    mobileMemberDisplay.innerHTML = `<i class="fa-solid fa-user-check" style="color: #1a73e8;"></i> 會員:${memberName}`;
+                }
+                if (navbar) {
+                    navbar.classList.add('logged-in');
+                }
+            } else {
+                navLogin.style.display = 'block';
+                navUser.style.display = 'none';
+                navLogout.style.display = 'none';
+                if (navbar) {
+                    navbar.classList.remove('logged-in');
+                }
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            if(confirm("確定要登出嗎？")) { localStorage.removeItem('dejeng_cart'); signOut(auth).then(() => { window.location.href = "index.html"; }); }
+        });
+    </script>
+
+    <script>
+        function syncInventory() {
+            let baseInventory = JSON.parse(localStorage.getItem('dejeng_base_inventory')) || {};
+            let baseInvUpdated = false;
+            
+            const allProducts = [
+                "經典華堡", "雙層華堡", "重磅培根雙層牛肉堡", "起司華堡", "小華堡", "經典脆雞堡",
+                "雙層起司牛肉堡", "華鱈魚堡", "美式花生雙層牛肉堡", "勁濃培根烤雞腿堡", "辣味華堡",
+                "起司脆雞堡", "BBQ手撕豬肉堡", "火烤純牛肉堡", "蜂蜜芥末脆雞堡", "辣味雙層脆雞堡",
+                "經典卡拉雞腿堡", "花生培根牛肉堡", "美味薯條", "酥炸洋蔥圈", "黃金雞塊", "美味薯球",
+                "香甜蘋果派", "酥炸雞翅", "起司濃汁薯條", "可口可樂", "雪碧", "檸檬紅茶", "無糖綠茶",
+                "研磨美式咖啡", "經典熱拿鐵", "巧克力聖代", "草莓聖代", "100%柳橙汁", "巧克力奶昔",
+                "香草奶昔", "冰鎮青草茶"
+            ];
+            
+            allProducts.forEach(name => {
+                if (baseInventory[name] === undefined) {
+                    baseInventory[name] = Math.floor(Math.random() * 101) + 20; // 隨機庫存 20-120
+                    baseInvUpdated = true;
+                }
+            });
+            
+            if (baseInvUpdated) {
+                localStorage.setItem('dejeng_base_inventory', JSON.stringify(baseInventory));
+            }
+            
+            const orders = JSON.parse(localStorage.getItem('dejeng_orders')) || [];
+            const computedInventory = {};
+            for (let name in baseInventory) {
+                computedInventory[name] = baseInventory[name];
+            }
+            
+            orders.forEach(order => {
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(itemStr => {
+                        const match = itemStr.match(/(.*?)(?:\s*\(.*?\))?\s*x(\d+)/);
+                        if (match) {
+                            const pName = match[1].trim();
+                            const pQty = parseInt(match[2]);
+                            if (computedInventory[pName] !== undefined) {
+                                computedInventory[pName] -= pQty;
+                            } else {
+                                baseInventory[pName] = Math.floor(Math.random() * 101) + 20;
+                                baseInvUpdated = true;
+                                computedInventory[pName] = baseInventory[pName] - pQty;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            if (baseInvUpdated) {
+                localStorage.setItem('dejeng_base_inventory', JSON.stringify(baseInventory));
+            }
+            
+            localStorage.setItem('dejeng_computed_inventory', JSON.stringify(computedInventory));
+            return computedInventory;
+        }
+
+        function selectPill(element, containerId) {
+            const container = document.getElementById(containerId);
+            const pills = container.getElementsByClassName('pill');
+            for(let i = 0; i < pills.length; i++) { pills[i].classList.remove('active'); }
+            element.classList.add('active');
+        }
+
+        function changeQty(amount) {
+            const qtyInput = document.getElementById('pd-qty');
+            let currentQty = parseInt(qtyInput.value);
+            currentQty += amount;
+            if(currentQty < 1) currentQty = 1;
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            if (productId && productsDB[productId]) {
+                const pd = productsDB[productId];
+                const inventory = JSON.parse(localStorage.getItem('dejeng_computed_inventory')) || {};
+                const stock = inventory[pd.name] !== undefined ? inventory[pd.name] : 100;
+                if (stock <= 0) {
+                    currentQty = 1;
+                } else if (currentQty > stock) {
+                    currentQty = stock;
+                    alert(`抱歉，購買數量已達庫存上限（${stock} 件）！`);
+                }
+            }
+            qtyInput.value = currentQty;
+        }
+
+        const productsDB = {
+            "tea01": { name: "水之森玄米抹茶", price: 65, img: "image/01.jpg", desc: "嚴選靜岡抹茶搭配焙煎玄米，茶湯翠綠，帶有濃郁的米香與抹茶回甘。" },
+            "tea02": { name: "英倫伯爵紅茶", price: 55, img: "image/02.jpg", desc: "特選錫蘭紅茶為基底，佐以佛手柑香氣，茶感醇厚，散發迷人優雅的英倫風情。" },
+            "tea03": { name: "珍珠鮮奶", price: 75, img: "image/03.jpg", desc: "Q彈手作珍珠搭配綠光牧場直送鮮乳，濃郁奶香與黑糖香氣完美融合。" },
+            "tea04": { name: "手炒黑糖鮮奶", price: 80, img: "image/04.jpg", desc: "職人每日手工慢炒黑糖，淋上醇厚鮮奶，甜而不膩，帶有獨特焦糖香。" },
+            "tea05": { name: "嫩仙草凍奶", price: 70, img: "image/05.jpg", desc: "古法熬煮的滑順嫩仙草，加入濃郁奶香，口感清爽滑順，夏日消暑首選。" },
+            "tea06": { name: "海鹽芒果綠", price: 65, img: "image/06.jpg", desc: "新鮮芒果果露搭配清香綠茶，上層鋪滿微鹹海鹽奶蓋，鹹甜交織。" },
+            "tea07": { name: "琥珀高峰烏龍", price: 55, img: "image/07.jpg", desc: "特選台灣高山烏龍，茶湯呈現清透琥珀色，入喉回甘悠長。" },
+            "tea08": { name: "茉香綠茶拿鐵", price: 65, img: "image/08.jpg", desc: "清雅的茉莉綠茶搭配滑順拿鐵，奶香與茶香交織出細膩層次。" },
+            "tea09": { name: "芋頭鮮奶", price: 85, img: "image/09.jpg", desc: "嚴選大甲芋頭熬煮成綿密芋泥，融入香醇鮮奶，每一口都是真材實料。" },
+            "tea10": { name: "果漾微甜氣泡飲", price: 75, img: "image/10.jpg", desc: "繽紛鮮果搭配爽口氣泡水，微甜滋味在舌尖跳躍，清涼消暑。" },
+            "tea11": { name: "經典冰水果茶", price: 80, img: "image/11.jpg", desc: "滿滿新鮮水果與紅茶完美調和，豐富的果香層次令人回味無窮。" },
+            "tea12": { name: "季節限定特調", price: 85, img: "image/12.jpg", desc: "嚴選當季新鮮水果，搭配茶師特調茶底，喝到時令的鮮甜與驚喜。" },
+            "tea13": { name: "招牌綜合果茶", price: 90, img: "image/13.jpg", desc: "滿滿的新鮮水果切片，融入清香回甘的茶湯中，果香與茶香的完美交響曲。" },
+            "tea27": { name: "焙烏龍鮮奶", price: 70, img: "image/27.jpg", desc: "精選深焙烏龍茶，搭配醇厚鮮奶，火侯拿捏恰到好處，帶有迷人的碳焙香氣。" },
+            "tea28": { name: "柚見冰茶", price: 65, img: "image/28.jpg", desc: "新鮮葡萄柚果肉搭配清香綠茶，酸甜清爽，每一口都充滿陽光的滋味。" },
+            "tea31": { name: "蜜桃春烏龍", price: 75, img: "image/31.jpg", desc: "特選蜜桃果泥與春季採收的烏龍茶完美結合，茶香與果香交織，清甜迷人。" },
+            "tea32": { name: "芝士奶蓋紅茶", price: 70, img: "image/32.jpg", desc: "特製微鹹濃郁芝士奶蓋，覆蓋在經典伯爵紅茶之上，口感綿密層次豐富。" },
+            "tea33": { name: "桂花烏龍凍飲", price: 65, img: "image/33.jpg", desc: "淡雅桂花香氣撲鼻，搭配滑順手作桂花凍，清涼解渴的優雅之選。" },
+            
+            "donut01": { name: "蜜糖波堤", price: 45, img: "image/0001.jpg", desc: "人氣招牌！口感Q彈的波堤，裹上薄薄一層甜蜜糖衣，經典不敗的美味。" },
+            "donut02": { name: "雙層巧克力波堤", price: 50, img: "image/0002.jpg", desc: "巧克力控必吃！Ｑ彈巧克力波堤再裹上濃郁黑巧克力，雙重享受。" },
+            "donut03": { name: "草莓波堤", price: 50, img: "image/0003.jpg", desc: "酸甜滋味！草莓巧克力沾醬搭配Q彈波堤，散發淡淡果香，少女心爆發。" },
+            "donut04": { name: "經典糖霜甜甜圈", price: 45, img: "image/0004.jpg", desc: "每日手工發酵揉製，外層裹上經典輕薄糖霜，口感鬆軟綿密。" },
+            "donut05": { name: "巧克力脆片波堤", price: 55, img: "image/0005.jpg", desc: "濃郁巧克力搭配酥脆脆片，咬下去卡滋卡滋，口感豐富多層次。" },
+            "donut06": { name: "草莓夾心甜甜圈", price: 55, img: "image/0006.jpg", desc: "夢幻粉色草莓巧克力外皮，內餡擠滿濃郁草莓卡士達，初戀滋味。" },
+            "donut07": { name: "抹茶巧貝", price: 55, img: "image/0007.jpg", desc: "圓潤可愛的巧貝造型，包裹著靜岡抹茶特調內餡，茶香濃厚而不苦澀。" },
+
+            "fruit01": { name: "鮮甜愛文芒果", price: 100, img: "image/S1.jpg", desc: "台灣特選愛文芒果，金黃果肉飽滿多汁，濃郁香氣讓您一口接一口。" },
+            "fruit02": { name: "清香麻豆文旦", price: 80, img: "image/S2.jpg", desc: "嚴選麻豆老欉文旦，果肉細緻甘甜，散發淡淡柚香，清爽解膩。" },
+            "fruit03": { name: "活力陽光香蕉", price: 50, img: "image/S3.jpg", desc: "產地直送優質香蕉，口感Ｑ彈綿密，快速補充能量的健康首選。" },
+            "fruit04": { name: "嚴選進口紅櫻桃", price: 150, img: "image/S4.jpg", desc: "空運直送頂級紅櫻桃，果實碩大飽滿，酸甜多汁，富含維他命C。" },
+            "fruit05": { name: "清脆鮮切小黃瓜", price: 40, img: "image/S5.jpg", desc: "產銷履歷小黃瓜，每日新鮮切片，口感清脆爽口，低卡無負擔。" },
+            "fruit06": { name: "紐西蘭奇異果", price: 85, img: "image/S6.jpg", desc: "富含膳食纖維與酵素的紐西蘭奇異果，微酸帶甜，餐後解膩最佳選擇。" },
+            "fruit07": { name: "鮮甜多汁水蜜桃", price: 120, img: "image/unnamed.jpg", desc: "嚴選水蜜桃，果皮粉嫩、果肉細白多汁，入口即化的甜蜜滋味。" },
+            "fruit08": { name: "屏東金鑽鳳梨", price: 70, img: "image/unnamed (1).jpg", desc: "台灣驕傲金鑽鳳梨，果肉細緻不咬舌，酸甜比例完美，香氣四溢。" },
+            "fruit09": { name: "屏東黑珍珠蓮霧", price: 90, img: "image/unnamed (2).jpg", desc: "頂級黑珍珠蓮霧，色澤暗紅發亮，果肉清脆多汁，甜度極高。" },
+            "fruit10": { name: "沁涼紅肉西瓜盤", price: 65, img: "image/unnamed (3).jpg", desc: "嚴選特級大西瓜，果肉沙脆、甜度極高，消暑解渴的夏日必備單品。" },
+            "fruit11": { name: "屏東無籽綠檸檬", price: 55, img: "image/unnamed (4).jpg", desc: "產地嚴選綠檸檬，香氣濃郁果汁豐富，適合泡茶或直接鮮榨飲用。" },
+            "fruit12": { name: "清脆甜水梨", price: 85, img: "image/unnamed (5).jpg", desc: "精選優質水梨，果肉雪白細緻，清脆多汁，帶來清涼潤喉的享受。" }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if(productId && productsDB[productId]) {
+                const pd = productsDB[productId];
+                document.title = `${pd.name} - 漢堡王 Burger King`;
+                document.getElementById('pd-image').src = pd.img;
+                document.getElementById('pd-name').innerText = pd.name;
+                document.getElementById('pd-desc').innerText = pd.desc;
+                
+                // 檢查特價
+                const statusSettings = JSON.parse(localStorage.getItem('dejeng_product_settings')) || {};
+                const promoPrice = statusSettings[pd.name]?.promoPrice;
+                if (promoPrice && promoPrice < pd.price) {
+                    document.getElementById('pd-price').innerHTML = `
+                        <span style="text-decoration: line-through; color: #95a5a6; font-size: 1.4rem; margin-right: 10px;">NT$ ${pd.price}</span>
+                        <span style="color: #e74c3c; font-weight: bold;">NT$ ${promoPrice}</span>
+                    `;
+                    const badge = document.getElementById('pd-badge');
+                    badge.innerHTML = `<i class="fa-solid fa-fire"></i> 限時特價中`;
+                    badge.style.background = 'linear-gradient(135deg, #ff416c, #ff4b2b)';
+                } else {
+                    document.getElementById('pd-price').innerText = `NT$ ${pd.price}`;
+                }
+                
+                                // 動態判斷與初始化客製化選項
+                const sugarGroup = document.getElementById('sugar-group');
+                const iceGroup = document.getElementById('ice-group');
+                const sugarTitle = sugarGroup.querySelector('.option-title');
+                const iceTitle = iceGroup.querySelector('.option-title');
+                const sugarOptions = document.getElementById('sugar-options');
+                const iceOptions = document.getElementById('ice-options');
+
+                if (productId.startsWith('tea')) {
+                    // 漢堡類
+                    sugarGroup.style.display = 'block';
+                    iceGroup.style.display = 'block';
+                    sugarTitle.innerHTML = '<i class="fa-solid fa-droplet"></i> 醬料調整';
+                    iceTitle.innerHTML = '<i class="fa-solid fa-leaf"></i> 配料調整';
+                    
+                    sugarOptions.innerHTML = `
+                        <div class="pill active" onclick="selectPill(this, 'sugar-options')">正常醬</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">多醬</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">少醬</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">不加醬</div>
+                    `;
+                    iceOptions.innerHTML = `
+                        <div class="pill active" onclick="selectPill(this, 'ice-options')">正常</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">去洋蔥</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">去酸黃瓜</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">去生菜</div>
+                    `;
+                    if (!(promoPrice && promoPrice < pd.price)) {
+                        document.getElementById('pd-badge').innerText = '火烤美味漢堡';
+                        document.getElementById('pd-badge').style.background = '#D62300';
+                    }
+                } else if (productId.startsWith('donut')) {
+                    // 配餐類
+                    sugarGroup.style.display = 'block';
+                    iceGroup.style.display = 'block';
+                    sugarTitle.innerHTML = '<i class="fa-solid fa-pepper-hot"></i> 調味選擇';
+                    iceTitle.innerHTML = '<i class="fa-solid fa-bowl-food"></i> 沾醬選擇';
+
+                    sugarOptions.innerHTML = `
+                        <div class="pill active" onclick="selectPill(this, 'sugar-options')">正常</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">去鹽</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">加辣</div>
+                    `;
+                    iceOptions.innerHTML = `
+                        <div class="pill active" onclick="selectPill(this, 'ice-options')">附糖醋醬</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">加購蜂蜜芥末醬</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">不需醬料</div>
+                    `;
+                    if (!(promoPrice && promoPrice < pd.price)) {
+                        document.getElementById('pd-badge').innerText = '美味精選配餐';
+                        document.getElementById('pd-badge').style.background = '#FF8A00';
+                    }
+                } else if (productId.startsWith('fruit')) {
+                    // 飲品與甜點類
+                    sugarGroup.style.display = 'block';
+                    iceGroup.style.display = 'block';
+                    sugarTitle.innerHTML = '<i class="fa-solid fa-ruler-combined"></i> 規格/尺寸';
+                    iceTitle.innerHTML = '<i class="fa-solid fa-snowflake"></i> 冰塊選擇';
+
+                    sugarOptions.innerHTML = `
+                        <div class="pill active" onclick="selectPill(this, 'sugar-options')">中杯</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">大杯</div>
+                        <div class="pill" onclick="selectPill(this, 'sugar-options')">小杯</div>
+                    `;
+                    iceOptions.innerHTML = `
+                        <div class="pill active" onclick="selectPill(this, 'ice-options')">正常冰</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">少冰</div>
+                        <div class="pill" onclick="selectPill(this, 'ice-options')">去冰</div>
+                    `;
+                    if (!(promoPrice && promoPrice < pd.price)) {
+                        document.getElementById('pd-badge').innerText = '沁涼冷飲與甜點';
+                        document.getElementById('pd-badge').style.background = '#FF8A00';
+                    }
+                }
+
+                document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+                    const qty = parseInt(document.getElementById('pd-qty').value);
+                    const sugar = document.querySelector('#sugar-options .active').innerText;
+                    const ice = document.querySelector('#ice-options .active').innerText;
+                    
+                    let cart = JSON.parse(localStorage.getItem('dejeng_cart')) || [];
+                    const existingIndex = cart.findIndex(item => item.id === productId && item.sugar === sugar && item.ice === ice);
+                    
+                    let cart = JSON.parse(localStorage.getItem('dejeng_cart')) || [];
+                    const existingIndex = cart.findIndex(item => item.id === productId && item.sugar === sugar && item.ice === ice);
+                    
+                    // Check stock
+                    const inventory = syncInventory();
+                    const stock = inventory[pd.name] !== undefined ? inventory[pd.name] : 100;
+                    let currentQtyInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
+                    if (currentQtyInCart + qty > stock) {
+                        alert(`抱歉，【${pd.name}】已無足夠庫存！目前庫存剩餘 ${stock} 件，您的購物車中已有 ${currentQtyInCart} 件。`);
+                        return;
+                    }
+
+                    if (existingIndex > -1) { cart[existingIndex].qty += qty; } 
+                    else { cart.push({ id: productId, qty: qty, sugar: sugar, ice: ice }); }
+
+                    localStorage.setItem('dejeng_cart', JSON.stringify(cart));
+                    let alertText = `(${sugar}/${ice}) `;
+                    alert(`【${pd.name}】${alertText}x ${qty} 已加入購物車！`);
+                    updateCartBadge();
+                    window.location.href = "cart.html";
+                });
+                
+                // 檢查是否完售或下架
+                const inventory = syncInventory();
+                
+                let isSoldOut = inventory[pd.name] !== undefined && inventory[pd.name] <= 0;
+                let isDelisted = statusSettings[pd.name] && statusSettings[pd.name].status === 'delisted';
+                
+                if(isDelisted || isSoldOut) {
+                    const btn = document.getElementById('add-to-cart-btn');
+                    btn.disabled = true;
+                    btn.style.background = '#ccc';
+                    btn.style.cursor = 'not-allowed';
+                    btn.innerHTML = isDelisted ? '<i class="fa-solid fa-ban"></i> 此商品已下架' : '<i class="fa-solid fa-ban"></i> 已完售';
+                }
+
+                // Render stock badge
+                const stockVal = inventory[pd.name] !== undefined ? inventory[pd.name] : 100;
+                const stockEl = document.getElementById('pd-stock');
+                if(stockEl) {
+                    if (isDelisted) {
+                        stockEl.style.color = '#7f8c8d';
+                        stockEl.style.backgroundColor = '#f0f3f4';
+                        stockEl.innerHTML = `<i class="fa-solid fa-box-archive"></i> 商品狀態: 已下架`;
+                    } else if (stockVal <= 0) {
+                        stockEl.style.color = '#e74c3c';
+                        stockEl.style.backgroundColor = '#fdedec';
+                        stockEl.innerHTML = `<i class="fa-solid fa-box-archive"></i> 庫存剩下: 0 (已完售)`;
+                    } else if (stockVal <= 10) {
+                        stockEl.style.color = '#e67e22';
+                        stockEl.style.backgroundColor = '#fdf2e9';
+                        stockEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> 僅剩 ${stockVal} 件，欲購從速！`;
+                    } else {
+                        stockEl.style.color = '#27ae60';
+                        stockEl.style.backgroundColor = '#e8f8f5';
+                        stockEl.innerHTML = `<i class="fa-solid fa-box-open"></i> 商品庫存: ${stockVal} 件`;
+                    }
+                }
+            } else {
+                alert('找不到該商品！將返回首頁。');
+                window.location.href = "index.html";
+            }
+            
+            updateCartBadge();
+        });
+        
+        const navbarToggle = document.getElementById('navbarToggle');
+        const navbarMenu = document.getElementById('navbarMenu');
+        navbarToggle.addEventListener('click', () => { navbarMenu.classList.toggle('active'); });
+
+        function updateCartBadge() {
+            let cart = JSON.parse(localStorage.getItem('dejeng_cart')) || [];
+            let totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            let badge = document.getElementById('cart-badge');
+            if(badge) {
+                if(totalQty > 0) {
+                    badge.style.display = 'inline-block';
+                    badge.innerText = totalQty;
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+            let logoBadge = document.getElementById('logo-cart-badge');
+            if(logoBadge) {
+                if(totalQty > 0) {
+                    logoBadge.style.display = 'inline-block';
+                    logoBadge.innerText = totalQty;
+                } else {
+                    logoBadge.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

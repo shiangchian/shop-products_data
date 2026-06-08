@@ -1,0 +1,208 @@
+<!DOCTYPE html> 
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員註冊 - 漢堡王 Burger King</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Outfit:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            background: #F5EBDC; 
+            height: 100vh; display: flex; align-items: center; justify-content: center; 
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif; position: relative; overflow: hidden;
+            color: #502314;
+        }
+
+        /* 懸浮背景特效 */
+        .background-pattern { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; 
+            background-image: radial-gradient(circle at 20% 80%, #FF8A00 0%, transparent 50%), radial-gradient(circle at 80% 20%, #D62300 0%, transparent 50%); 
+            z-index: 0; 
+        }
+        .floating-element { position: absolute; border-radius: 50%; background: rgba(255, 138, 0, 0.12); animation: float 6s ease-in-out infinite; z-index: 0; }
+        .floating-element:nth-child(1) { width: 120px; height: 120px; top: 15%; left: 15%; animation-delay: 0s; }
+        .floating-element:nth-child(2) { width: 80px; height: 80px; top: 65%; right: 10%; animation-delay: 2s; background: rgba(214, 35, 0, 0.08); }
+        .floating-element:nth-child(3) { width: 60px; height: 60px; bottom: 20%; left: 25%; animation-delay: 4s; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+
+        /* 卡片設計 */
+        .card { 
+            background: white;
+            border: 3px solid #502314 !important; border-radius: 24px !important; width: 100%; max-width: 420px; 
+            box-shadow: 6px 6px 0px #502314 !important; padding: 2.5rem 2rem; z-index: 1;
+            transform: translateY(20px); opacity: 0; animation: slideUp 0.8s forwards ease-out;
+        }
+        @keyframes slideUp { to { transform: translateY(0); opacity: 1; } }
+
+        /* Logo 區域 */
+        .brand-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px; }
+        .brand-logo { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #FF8A00; box-shadow: 0 4px 10px rgba(0,0,0,0.05); object-fit: contain; }
+        .brand-title { font-family: 'Lilita One', 'Noto Sans TC', sans-serif; color: #502314; font-weight: 900; letter-spacing: 0.5px; margin: 0; font-size: 2rem; }
+        
+        /* 表單設計 */
+        .input-group-text { background: #F5EBDC; border: 2px solid #502314; border-right: none; color: #502314; border-radius: 12px 0 0 12px; font-size: 1.1rem; }
+        .form-control { border: 2px solid #502314; border-left: none; padding: 12px; background: #F5EBDC; border-radius: 0 12px 12px 0; font-size: 0.95rem; color: #502314; font-weight: 700; }
+        .form-control::placeholder { color: #8a7a68; }
+        .form-control:focus { border-color: #D62300; box-shadow: none; background: #ffffff; color: #502314; }
+        .input-group { border-radius: 12px; border: none; transition: 0.3s; overflow: visible; margin-bottom: 1.25rem !important; }
+        .input-group:focus-within .input-group-text { background: #ffffff; border-color: #D62300; }
+        .input-group:focus-within .form-control { border-color: #D62300; }
+
+        /* 按鈕設計 */
+        .btn-gradient { 
+            background: #FF8A00; 
+            border: 3px solid #502314 !important; 
+            color: #502314 !important; 
+            padding: 14px; 
+            font-size: 1.1rem; 
+            font-weight: 900; 
+            border-radius: 50px !important; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            width: 100%; 
+            margin-top: 15px; 
+            box-shadow: 3px 3px 0px #502314 !important; 
+        }
+        .btn-gradient:hover { transform: translateY(-2px); box-shadow: 4px 4px 0px #502314 !important; background: #D62300 !important; color: white !important; }
+        
+        /* 驗證碼 */
+        .captcha-box { 
+            background: #F5EBDC; 
+            color: #502314; 
+            font-family: 'Lilita One', monospace; 
+            font-size: 1.6rem; 
+            letter-spacing: 5px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            user-select: none; 
+            border: 2px dashed #502314; 
+            font-weight: 900; 
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8); 
+        }
+        .captcha-box:hover {
+            border-color: #D62300;
+            color: #D62300;
+        }
+        
+        .bottom-links a { color: #D62300; font-weight: 900; text-decoration: none; transition: 0.3s; }
+        .bottom-links a:hover { color: #502314; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="background-pattern"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+
+    <div class="card">
+        <div class="text-center mb-4">
+            <div class="brand-header">
+                <img src="image/logo.png" alt="漢堡王 Burger King Logo" class="brand-logo">
+                <h2 class="brand-title">漢堡王 Burger King</h2>
+            </div>
+            <p class="text-muted small mt-2">註冊會員，火烤美味與最新獨家優惠等你來拿</p>
+        </div>
+        
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+            <input type="text" id="username" class="form-control" placeholder="使用者名稱 (顯示名稱)">
+        </div>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+            <input type="email" id="email" class="form-control" placeholder="電子信箱">
+        </div>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+            <input type="password" id="password" class="form-control" placeholder="密碼 (至少6位)">
+        </div>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-check-double"></i></span>
+            <input type="password" id="confirm-password" class="form-control" placeholder="確認密碼">
+        </div>
+
+        <div class="mb-4 mt-2">
+            <div class="row g-2">
+                <div class="col-7">
+                    <input type="text" id="captcha-input" class="form-control text-center h-100" placeholder="輸入驗證碼" style="border-radius: 10px; border: 1px solid #dee2e6;">
+                </div>
+                <div class="col-5">
+                    <div id="captcha-display" class="captcha-box h-100 py-2" title="點擊重新產生">1234</div>
+                </div>
+            </div>
+        </div>
+        
+        <button id="btn-signup" class="btn btn-gradient mb-3">立即註冊</button>
+        
+        <div class="text-center mt-3 small bottom-links">
+            <span class="text-muted">已有帳號？</span> 
+            <a href="login.html">前往登入</a>
+            <br>
+            <a href="index.html" class="mt-4 d-inline-block text-muted" style="font-weight: normal;"><i class="fa-solid fa-arrow-left"></i> 返回首頁</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyC-LcCfcPYCYAQZ7n45YCe6tCY_jb-ygvI", authDomain: "sonicboom-shop.firebaseapp.com", projectId: "sonicboom-shop", storageBucket: "sonicboom-shop.firebasestorage.app", messagingSenderId: "976804831944", appId: "1:976804831944:web:6ede6a95196478bd49bbfd", measurementId: "G-3FEKWL0QXZ" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        let currentCaptcha = "";
+        function generateCaptcha() {
+            const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            let result = "";
+            for(let i=0; i<4; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            currentCaptcha = result;
+            document.getElementById('captcha-display').innerText = result;
+        }
+
+        generateCaptcha();
+        document.getElementById('captcha-display').addEventListener('click', generateCaptcha);
+
+        document.getElementById('btn-signup').addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPwd = document.getElementById('confirm-password').value;
+            const captchaInput = document.getElementById('captcha-input').value.toUpperCase();
+
+            if(!username || !email || !password) { alert("請填寫所有欄位！"); return; }
+            if(password.length < 6) { alert("密碼長度需至少 6 位數！"); return; }
+            if(password !== confirmPwd) { alert("兩次密碼輸入不一致！"); return; }
+            if(captchaInput !== currentCaptcha) { 
+                alert("驗證碼錯誤，請重新輸入！"); 
+                generateCaptcha(); 
+                document.getElementById('captcha-input').value = "";
+                return; 
+            }
+
+            const btn = document.getElementById('btn-signup');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
+            btn.disabled = true;
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    updateProfile(user, { displayName: username }).then(() => {
+                        alert("註冊成功！歡迎加入漢堡王，" + username);
+                        window.location.href = "login.html";
+                    });
+                })
+                .catch((error) => {
+                    alert("註冊失敗：" + error.message);
+                    generateCaptcha();
+                    btn.innerHTML = '立即註冊';
+                    btn.disabled = false;
+                });
+        });
+    </script>
+</body>
+</html>

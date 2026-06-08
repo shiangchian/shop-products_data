@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員中心 - 漢堡王 Burger King</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Outfit:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { 
+            background: #F5EBDC; 
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #502314;
+        }
+        
+        .navbar { 
+            background: #502314 !important; 
+            padding: 15px 20px; 
+            border-bottom: 4px solid #FF8A00;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar .container {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            flex-wrap: nowrap !important;
+        }
+        .navbar-brand { 
+            font-family: 'Lilita One', 'Noto Sans TC', sans-serif;
+            font-size: 1.45rem; 
+            font-weight: 900; 
+            color: #F5EBDC !important; 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .navbar-brand img { 
+            width: 38px; 
+            height: 38px; 
+            border-radius: 50%;
+            border: 2px solid #FF8A00;
+        }
+
+        .btn-nav-action {
+            font-weight: 900;
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            white-space: nowrap;
+            border: 3px solid #502314;
+            box-shadow: 2px 2px 0px #502314;
+        }
+        
+        .btn-home {
+            background: #FF8A00;
+            color: #502314;
+        }
+        
+        .btn-home:hover {
+            background: #D62300;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 3px 3px 0px #502314;
+        }
+        
+        .btn-logout {
+            background: #502314;
+            color: #F5EBDC;
+        }
+        
+        .btn-logout:hover {
+            background: #D62300;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 3px 3px 0px #502314;
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+            .navbar-brand {
+                font-size: 1.15rem;
+                gap: 8px;
+            }
+            .navbar-brand img {
+                width: 32px;
+                height: 32px;
+            }
+            .btn-nav-action {
+                padding: 8px 14px;
+                font-size: 0.85rem;
+                gap: 5px;
+            }
+            .profile-container {
+                padding: 20px 15px !important;
+                border-radius: 16px !important;
+            }
+            .order-card .card-body {
+                padding: 15px !important;
+            }
+        }
+        
+        .profile-container {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 6px 6px 0px #502314;
+            border: 3px solid #502314;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        .profile-container:hover {
+            box-shadow: 8px 8px 0px #502314;
+        }
+
+        .profile-header { text-align: center; margin-bottom: 35px; }
+        .profile-icon { 
+            font-size: 3.5rem; 
+            color: #FF8A00; 
+            margin-bottom: 15px; 
+            background: #502314;
+            padding: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            line-height: 1;
+            box-shadow: 0 6px 15px rgba(80, 35, 20, 0.1);
+            border: 3.5px solid #FF8A00;
+        }
+        
+        .form-group { margin-bottom: 24px; }
+        .form-label { font-weight: 900; color: #502314; font-size: 0.92rem; margin-bottom: 8px; display: block; }
+        .form-control { 
+            border-radius: 12px; 
+            padding: 12px 16px; 
+            background: #F5EBDC; 
+            border: 2px solid #502314; 
+            color: #502314;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .form-control:disabled {
+            background: #e5dac9;
+            color: #502314;
+            opacity: 0.8;
+        }
+        .form-control:focus { 
+            border-color: #D62300; 
+            box-shadow: 0 0 0 4px rgba(214, 35, 0, 0.15); 
+            background: #ffffff; 
+        }
+
+        .btn-gradient { 
+            background: #FF8A00; 
+            border: 3px solid #502314; 
+            color: #502314; 
+            padding: 14px; 
+            font-weight: 900; 
+            font-size: 1rem;
+            border-radius: 50px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            width: 100%; 
+            margin-top: 10px; 
+            box-shadow: 3px 3px 0px #502314;
+        }
+        .btn-gradient:hover { 
+            background: #D62300;
+            color: white;
+            transform: translateY(-2px); 
+            box-shadow: 4px 4px 0px #502314; 
+        }
+        .btn-gradient:active {
+            transform: translateY(0);
+        }
+
+        .profile-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .profile-container::-webkit-scrollbar-track {
+            background: #F5EBDC;
+            border-radius: 10px;
+        }
+        .profile-container::-webkit-scrollbar-thumb {
+            background: #502314;
+            border-radius: 10px;
+        }
+        .profile-container::-webkit-scrollbar-thumb:hover {
+            background: #D62300;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .order-card {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 3px solid #502314 !important;
+            border-left: 8px solid #FF8A00 !important;
+            box-shadow: 4px 4px 0px #502314 !important;
+            animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+            background: white !important;
+        }
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 6px 6px 0px #502314 !important;
+            border-left-color: #D62300 !important;
+        }
+
+        .section-banner {
+            background: linear-gradient(135deg, #FF8A00 0%, #D62300 100%);
+            color: #502314;
+            padding: 14px;
+            font-weight: 900;
+            font-size: 1.3rem;
+            text-align: center;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 3px 3px 0px #502314;
+            border: 3px solid #502314;
+        }
+        .section-banner.details {
+            background: linear-gradient(135deg, #FF8A00 0%, #D62300 100%);
+            box-shadow: 3px 3px 0px #502314;
+        }
+        .details-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #502314;
+            box-shadow: 2px 2px 0px #502314;
+        }
+
+        .table-bordered {
+            border: 3px solid #502314 !important;
+        }
+        .table thead th {
+            background-color: #FF8A00 !important;
+            color: #502314 !important;
+            font-weight: 900 !important;
+            border-bottom: 3px solid #502314 !important;
+            border-right: 2px solid #502314 !important;
+        }
+        .table thead th:last-child {
+            border-right: none !important;
+        }
+        .table tbody td {
+            font-weight: 700 !important;
+            color: #502314 !important;
+            border-bottom: 2px solid #502314 !important;
+            border-right: 2px solid #502314 !important;
+        }
+        .table tbody td:last-child {
+            border-right: none !important;
+        }
+        .table tbody tr:last-child td {
+            border-bottom: none !important;
+        }
+        
+        /* Badges inside profile */
+        .order-card .badge, .table .badge {
+            background-color: #FF8A00 !important;
+            color: #502314 !important;
+            border: 1.5px solid #502314 !important;
+            font-weight: bold;
+        }
+        .order-card .list-group-item {
+            font-weight: 700;
+            color: #502314;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="image/logo.png" alt="Logo"> 漢堡王 Burger King
+            </a>
+            <div class="d-flex align-items-center">
+                <a href="index.html" class="btn-nav-action btn-home"><i class="fa-solid fa-house"></i> 回首頁</a>
+                <button id="btn-logout" class="btn-nav-action btn-logout ms-3" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> 登出</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- 左側/上方：會員中心密碼修改 -->
+            <div class="col-lg-5">
+                <div class="profile-container w-100">
+                    <div class="profile-header">
+                        <i class="fa-solid fa-circle-user profile-icon"></i>
+                        <h2 style="color: #502314; font-weight: 900; font-family: 'Lilita One', 'Noto Sans TC', sans-serif;">會員中心</h2>
+                        <p class="text-muted">管理您的帳號與密碼</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">登入信箱 (Email)</label>
+                        <input type="text" id="user-email" class="form-control" disabled value="讀取中...">
+                    </div>
+
+                    <hr class="my-4">
+                    <h4 style="color: #502314; font-weight: 900; margin-bottom: 20px;">修改密碼</h4>
+
+                    <div class="form-group">
+                        <label class="form-label">新密碼</label>
+                        <input type="password" id="new-password" class="form-control" placeholder="請輸入至少 6 位數新密碼">
+                    </div>
+
+                    <button id="btn-update-pwd" class="btn btn-gradient">確認修改密碼</button>
+                </div>
+            </div>
+
+            <!-- 右側/下方：歷史購買紀錄 -->
+            <div class="col-lg-7">
+                <div class="profile-container w-100" style="max-height: 80vh; overflow-y: auto;">
+                    <!-- 歷史購買紀錄檢視 -->
+                    <div id="order-history-view">
+                        <h3 style="color: #502314; font-weight: 900; margin-bottom: 25px; font-family: 'Lilita One', 'Noto Sans TC', sans-serif;">
+                            <i class="fa-solid fa-clock-rotate-left me-2" style="color: #FF8A00;"></i>歷史購買紀錄
+                        </h3>
+                        <div id="order-history-list">
+                            <div class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
+                                <p>載入訂單紀錄中...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 訂單明細檢視 -->
+                    <div id="order-detail-view" style="display: none;">
+                        <div class="section-banner details mb-4">
+                            <i class="fa-solid fa-file-invoice fs-4"></i> 訂單明細
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <h5 class="fw-bold mb-3" style="color: #502314;"><i class="fa-solid fa-info-circle me-1" style="color: #FF8A00;"></i>訂單資訊</h5>
+                                <div class="mb-2"><strong>訂單流水號：</strong><span id="detail-order-id" class="badge text-start" style="font-size:0.95rem; white-space: normal; display: inline-block; word-break: break-all;">ORD...</span></div>
+                                <div><strong>建立時間：</strong><span id="detail-order-time" class="text-muted">2026-05-28 12:00:00</span></div>
+                            </div>
+                            <div class="col-md-6 mb-3 text-md-end">
+                                <h5 class="fw-bold mb-3" style="color: #502314;"><i class="fa-solid fa-credit-card me-1" style="color: #D62300;"></i>付款與狀態</h5>
+                                <div class="mb-2"><strong>付款金額：</strong><span id="detail-payment-total" class="fw-bold fs-5" style="color: #D62300;">NT$ 0</span></div>
+                                <div class="mb-2"><strong>付款方式：</strong><span id="detail-payment-method" class="badge bg-info text-dark">信用卡付款</span></div>
+                                <div><strong>訂單狀態：</strong><span id="detail-order-status" class="badge bg-warning">待出貨</span></div>
+                            </div>
+                        </div>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered align-middle text-center" style="border-color: #e2e8f0;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>商品名稱</th>
+                                        <th style="width: 100px;">圖片</th>
+                                        <th style="width: 100px;">單價</th>
+                                        <th style="width: 80px;">數量</th>
+                                        <th style="width: 120px;">小計</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detail-items-body">
+                                    <!-- 動態生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex gap-3 justify-content-center mt-4">
+                            <a href="index.html" class="btn text-white rounded-pill px-4 py-2" style="background-color: #FF8A00; color: #502314 !important; border: 3px solid #502314; font-weight: 900; box-shadow: 2px 2px 0px #502314;"><i class="fa-solid fa-house me-1"></i> 返回首頁</a>
+                            <button class="btn rounded-pill px-4 py-2" style="background-color: #F5EBDC; color: #502314; border: 3px solid #502314; font-weight: 900; box-shadow: 2px 2px 0px #502314;" onclick="hideOrderDetail()"><i class="fa-solid fa-arrow-left me-1"></i> 返回訂單列表</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyC-LcCfcPYCYAQZ7n45YCe6tCY_jb-ygvI", authDomain: "sonicboom-shop.firebaseapp.com", projectId: "sonicboom-shop", storageBucket: "sonicboom-shop.firebasestorage.app", messagingSenderId: "976804831944", appId: "1:976804831944:web:6ede6a95196478bd49bbfd", measurementId: "G-3FEKWL0QXZ" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('user-email').value = user.email;
+                document.getElementById('btn-logout').style.display = 'inline-block';
+                renderPurchaseHistory(user);
+            } else {
+                alert('您尚未登入，請先登入！');
+                window.location.href = 'login.html';
+            }
+        });
+
+        function renderPurchaseHistory(user) {
+            const historyList = document.getElementById('order-history-list');
+            if (!historyList) return;
+
+            const memberName = user.displayName || user.email.split('@')[0];
+            const orders = JSON.parse(localStorage.getItem('dejeng_orders')) || [];
+            
+            // Filter orders for this user
+            const userOrders = orders.filter(order => {
+                if (!order.customer) return false;
+                const custLower = order.customer.toLowerCase().trim();
+                const memberLower = memberName.toLowerCase().trim();
+                const emailLower = user.email.toLowerCase().trim();
+                
+                return custLower === memberLower || 
+                       custLower === emailLower || 
+                       custLower.includes(memberLower) ||
+                       custLower.includes(emailLower.split('@')[0]);
+            });
+
+            // Sort orders by timestamp descending
+            userOrders.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            if (userOrders.length === 0) {
+                historyList.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fa-solid fa-receipt text-muted mb-3" style="font-size: 3.5rem; opacity: 0.5;"></i>
+                        <p class="text-muted mb-3">您目前尚無購買紀錄</p>
+                        <a href="index.html" class="btn rounded-pill px-4 btn-sm" style="background-color: #FF8A00; color: #502314; border: 2px solid #502314; font-weight: 900;" style="font-weight: 500;">前去選購</a>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            userOrders.forEach((order, index) => {
+                const dateStr = order.timestamp ? new Date(order.timestamp).toLocaleString('zh-TW', { hour12: false }) : '未知時間';
+                const itemsHtml = order.items.map(item => {
+                    const lastXIdx = item.lastIndexOf(' x');
+                    let nameAndSpec = item;
+                    let qty = 1;
+                    if (lastXIdx !== -1) {
+                        nameAndSpec = item.substring(0, lastXIdx);
+                        qty = item.substring(lastXIdx + 2).trim();
+                    }
+                    return `
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-2" style="background: transparent; font-size: 0.95rem; border-bottom: 1px dashed rgba(0,0,0,0.05) !important;">
+                            <span class="text-secondary">
+                                <i class="fa-solid fa-burger me-2" style="color: #FF8A00; font-size: 0.85rem;"></i>
+                                <strong>${nameAndSpec}</strong>
+                            </span>
+                            <span class="badge bg-light text-dark rounded-pill border fw-bold px-2 py-1">x${qty}</span>
+                        </li>
+                    `;
+                }).join('');
+
+                const orderNum = userOrders.length - index;
+                const ordDate = new Date(order.timestamp);
+                const ordDateStr = ordDate.getFullYear() + 
+                                   String(ordDate.getMonth() + 1).padStart(2, '0') + 
+                                   String(ordDate.getDate()).padStart(2, '0') +
+                                   String(ordDate.getHours()).padStart(2, '0') +
+                                   String(ordDate.getMinutes()).padStart(2, '0') +
+                                   String(ordDate.getSeconds()).padStart(2, '0');
+                const serialNo = order.orderId || `ORD${ordDateStr}`;
+                html += `
+                    <div class="card border-0 shadow-sm mb-3 order-card" style="border-radius: 15px; overflow: hidden; background: #fafbfc; animation-delay: ${index * 0.08}s;">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-3">
+                                <div>
+                                    <span class="text-muted small d-block mb-1"><i class="fa-regular fa-clock me-1"></i>${dateStr}</span>
+                                    <span class="badge rounded-pill text-start" style="font-size: 0.8rem; background-color: #E8F8F5; color: #117A65; padding: 4px 10px; white-space: normal; display: inline-block; word-break: break-all;">訂單流水號：${serialNo}</span>
+                                </div>
+                                <div class="text-start text-sm-end mt-1 mt-sm-0">
+                                    <span class="text-muted small d-block">消費金額</span>
+                                    <span class="fw-bold text-primary" style="font-size: 1.25rem; white-space: nowrap;">NT$ ${order.total}</span>
+                                </div>
+                            </div>
+                            <ul class="list-group list-group-flush mb-0 pt-2 border-top border-light-subtle">
+                                ${itemsHtml}
+                            </ul>
+                            <div class="text-end mt-3 pt-2 border-top border-light-subtle">
+                                <button class="btn btn-sm rounded-pill px-3" style="background-color: #FF8A00; color: #502314; border: 2px solid #502314; font-weight: 900; box-shadow: 2px 2px 0px #502314;" onclick="showOrderDetail('${serialNo}')">
+                                    <i class="fa-solid fa-file-invoice me-1"></i>查看訂單明細
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyList.innerHTML = html;
+        }
+
+        const productsDB = {
+            "tea01": { name: "經典華堡", price: 139, img: "image/burger_whopper.png" },
+            "tea02": { name: "雙層華堡", price: 179, img: "image/burger_double.png" },
+            "tea03": { name: "重磅培根雙層牛肉堡", price: 189, img: "image/burger_double.png" },
+            "tea04": { name: "起司華堡", price: 154, img: "image/burger_whopper.png" },
+            "tea05": { name: "小華堡", price: 99, img: "image/burger_whopper.png" },
+            "tea06": { name: "經典脆雞堡", price: 89, img: "image/burger_chicken.png" },
+            "tea07": { name: "雙層起司牛肉堡", price: 109, img: "image/burger_double.png" },
+            "tea08": { name: "華鱈魚堡", price: 99, img: "image/burger_fish.png" },
+            "tea09": { name: "美式花生雙層牛肉堡", price: 149, img: "image/burger_double.png" },
+            "tea10": { name: "勁濃培根烤雞腿堡", price: 139, img: "image/burger_chicken.png" },
+            "tea11": { name: "辣味華堡", price: 139, img: "image/burger_whopper.png" },
+            "tea12": { name: "起司脆雞堡", price: 99, img: "image/burger_chicken.png" },
+            "tea13": { name: "BBQ手撕豬肉堡", price: 129, img: "image/burger_whopper.png" },
+            "tea27": { name: "火烤純牛肉堡", price: 79, img: "image/burger_whopper.png" },
+            "tea28": { name: "蜂蜜芥末脆雞堡", price: 99, img: "image/burger_chicken.png" },
+            "tea31": { name: "辣味雙層脆雞堡", price: 119, img: "image/burger_chicken.png" },
+            "tea32": { name: "經典卡拉雞腿堡", price: 119, img: "image/burger_chicken.png" },
+            "tea33": { name: "花生培根牛肉堡", price: 129, img: "image/burger_whopper.png" },
+            "donut01": { name: "美味薯條", price: 49, img: "image/side_fries.png" },
+            "donut02": { name: "酥炸洋蔥圈", price: 59, img: "image/side_onion_rings.png" },
+            "donut03": { name: "黃金雞塊", price: 59, img: "image/side_nuggets.png" },
+            "donut04": { name: "美味薯球", price: 49, img: "image/side_fries.png" },
+            "donut05": { name: "香甜蘋果派", price: 45, img: "image/logo.png" },
+            "donut06": { name: "酥炸雞翅", price: 69, img: "image/burger_chicken.png" },
+            "donut07": { name: "起司濃汁薯條", price: 69, img: "image/side_fries.png" },
+            "fruit01": { name: "可口可樂", price: 40, img: "image/drink_cola.png" },
+            "fruit02": { name: "雪碧", price: 40, img: "image/drink_cola.png" },
+            "fruit03": { name: "檸檬紅茶", price: 40, img: "image/drink_cola.png" },
+            "fruit04": { name: "無糖綠茶", price: 40, img: "image/drink_cola.png" },
+            "fruit05": { name: "研磨美式咖啡", price: 50, img: "image/drink_cola.png" },
+            "fruit06": { name: "經典熱拿鐵", price: 60, img: "image/drink_cola.png" },
+            "fruit07": { name: "巧克力聖代", price: 55, img: "image/logo.png" },
+            "fruit08": { name: "草莓聖代", price: 55, img: "image/logo.png" },
+            "fruit09": { name: "100%柳橙汁", price: 50, img: "image/drink_cola.png" },
+            "fruit10": { name: "巧克力奶昔", price: 65, img: "image/drink_cola.png" },
+            "fruit11": { name: "香草奶昔", price: 65, img: "image/drink_cola.png" },
+            "fruit12": { name: "冰鎮青草茶", price: 40, img: "image/drink_cola.png" }
+        };
+
+        function parseOrderItem(itemStr) {
+            let name = '';
+            let code = '';
+            let specs = '';
+            let qty = 1;
+
+            const lastX = itemStr.lastIndexOf(' x');
+            let baseStr = itemStr;
+            if (lastX !== -1) {
+                baseStr = itemStr.substring(0, lastX).trim();
+                qty = parseInt(itemStr.substring(lastX + 2).trim(), 10) || 1;
+            }
+
+            const parenMatch = baseStr.match(/\(([^)]+)\)/);
+            if (parenMatch) {
+                name = baseStr.replace(/\s*\([^)]+\)/g, '').trim();
+                const inner = parenMatch[1];
+                const parts = inner.split('/');
+                code = parts[0];
+                if (parts.length > 1) {
+                    specs = parts.slice(1).join(' / ');
+                }
+            } else {
+                name = baseStr;
+            }
+
+            return { name, code, specs, qty };
+        }
+
+        function findProductDetails(name) {
+            for (const key in productsDB) {
+                if (productsDB[key].name === name) {
+                    return productsDB[key];
+                }
+            }
+            return null;
+        }
+
+        window.showOrderDetail = function(orderId) {
+            const orders = JSON.parse(localStorage.getItem('dejeng_orders')) || [];
+            const order = orders.find(o => {
+                if (o.orderId === orderId) return true;
+                const ordDate = new Date(o.timestamp);
+                const ordDateStr = ordDate.getFullYear() + 
+                                   String(ordDate.getMonth() + 1).padStart(2, '0') + 
+                                   String(ordDate.getDate()).padStart(2, '0') +
+                                   String(ordDate.getHours()).padStart(2, '0') +
+                                   String(ordDate.getMinutes()).padStart(2, '0') +
+                                   String(ordDate.getSeconds()).padStart(2, '0');
+                const fallbackId = `ORD${ordDateStr}`;
+                return fallbackId === orderId;
+            });
+
+            if (!order) {
+                alert('找不到該筆訂單明細！');
+                return;
+            }
+
+            document.getElementById('detail-order-id').innerText = order.orderId || orderId;
+            document.getElementById('detail-order-time').innerText = order.timestamp ? new Date(order.timestamp).toLocaleString('zh-TW', { hour12: false }) : '未知時間';
+            document.getElementById('detail-payment-total').innerText = `NT$ ${order.total.toLocaleString()}`;
+            document.getElementById('detail-payment-method').innerText = order.paymentMethod || '線上付款';
+            
+            const pmBadge = document.getElementById('detail-payment-method');
+            if (order.paymentMethod === '貨到付款') {
+                pmBadge.className = 'badge text-white'; pmBadge.style.backgroundColor = '#D62300';
+            } else if (order.paymentMethod === 'Line Pay') {
+                pmBadge.className = 'badge text-white';
+                pmBadge.style.backgroundColor = '#06c755';
+            } else {
+                pmBadge.className = 'badge text-white'; pmBadge.style.backgroundColor = '#FF8A00';
+                pmBadge.style.backgroundColor = '';
+            }
+
+            const statusBadge = document.getElementById('detail-order-status');
+            const isCompleted = order.status === 'completed';
+            statusBadge.innerText = isCompleted ? '已出餐' : '準備中';
+            statusBadge.className = 'badge text-white'; statusBadge.style.backgroundColor = isCompleted ? '#27ae60' : '#D62300';
+
+            const tbody = document.getElementById('detail-items-body');
+            let itemsHtml = '';
+            const statusSettings = JSON.parse(localStorage.getItem('dejeng_product_settings')) || {};
+
+            order.items.forEach(itemStr => {
+                const parsed = parseOrderItem(itemStr);
+                const p = findProductDetails(parsed.name);
+                
+                const img = p ? p.img : 'image/logo.png';
+                let unitPrice = p ? p.price : 0;
+                if (p) {
+                    const promoPrice = statusSettings[p.name]?.promoPrice;
+                    if (promoPrice && promoPrice < p.price) {
+                        unitPrice = promoPrice;
+                    }
+                }
+                
+                const subtotal = unitPrice * parsed.qty;
+                
+                let specSpan = '';
+                if (parsed.specs) {
+                    specSpan = `<span class="badge text-white ms-1" style="font-size:0.75rem; background-color:#502314 !important; border: 1.5px solid #FF8A00 !important;">${parsed.specs}</span>`;
+                }
+
+                itemsHtml += `
+                    <tr>
+                        <td class="text-start ps-3">
+                            <div class="fw-bold text-dark fs-6">${parsed.name} ${specSpan}</div>
+                            ${parsed.code ? `<div class="text-muted small mt-1">${parsed.code}</div>` : ''}
+                        </td>
+                        <td>
+                            <img src="${img}" alt="${parsed.name}" class="details-img">
+                        </td>
+                        <td class="fw-bold text-primary">$${unitPrice}</td>
+                        <td class="fw-bold">${parsed.qty}</td>
+                        <td class="fw-bold text-danger">$${subtotal.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+
+            let itemsSum = 0;
+            order.items.forEach(itemStr => {
+                const parsed = parseOrderItem(itemStr);
+                const p = findProductDetails(parsed.name);
+                let unitPrice = p ? p.price : 0;
+                if (p) {
+                    const promoPrice = statusSettings[p.name]?.promoPrice;
+                    if (promoPrice && promoPrice < p.price) {
+                        unitPrice = promoPrice;
+                    }
+                }
+                itemsSum += unitPrice * parsed.qty;
+            });
+
+            if (order.discount > 0 || itemsSum !== order.total) {
+                const discountVal = order.discount || (itemsSum - order.total);
+                if (discountVal > 0) {
+                    itemsHtml += `
+                        <tr class="table-light">
+                            <td colspan="4" class="text-end fw-bold">折扣</td>
+                            <td class="fw-bold text-success">-$${discountVal.toLocaleString()}</td>
+                        </tr>
+                    `;
+                }
+            }
+
+            itemsHtml += `
+                <tr class="table-light">
+                    <td colspan="4" class="text-end fw-bold fs-6">付款總額</td>
+                    <td class="fw-bold text-danger fs-6">$${order.total.toLocaleString()}</td>
+                </tr>
+            `;
+
+            tbody.innerHTML = itemsHtml;
+
+            document.getElementById('order-history-view').style.display = 'none';
+            document.getElementById('order-detail-view').style.display = 'block';
+        };
+
+        window.hideOrderDetail = function() {
+            document.getElementById('order-detail-view').style.display = 'none';
+            document.getElementById('order-history-view').style.display = 'block';
+        };
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            if(confirm("確定要登出嗎？")) { 
+                localStorage.removeItem('dejeng_cart'); 
+                signOut(auth).then(() => { window.location.href = 'index.html'; }); 
+            }
+        });
+
+        document.getElementById('btn-update-pwd').addEventListener('click', () => {
+            const user = auth.currentUser;
+            const newPwd = document.getElementById('new-password').value;
+            
+            if(!newPwd || newPwd.length < 6) {
+                alert('密碼不得為空，且至少需要 6 個字元。');
+                return;
+            }
+
+            if(user) {
+                const btn = document.getElementById('btn-update-pwd');
+                btn.innerText = '修改中...';
+                btn.disabled = true;
+
+                updatePassword(user, newPwd).then(() => {
+                    alert('密碼修改成功！請重新登入。');
+                    signOut(auth).then(() => { window.location.href = 'login.html'; });
+                }).catch((error) => {
+                    console.error(error);
+                    if(error.code === 'auth/requires-recent-login') {
+                        alert('基於安全考量，修改密碼需要重新驗證身分，請先登出再重新登入後修改。');
+                    } else {
+                        alert('修改失敗，請稍後再試。');
+                    }
+                    btn.innerText = '確認修改密碼';
+                    btn.disabled = false;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
